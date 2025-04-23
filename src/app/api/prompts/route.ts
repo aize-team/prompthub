@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+export const dynamic = "force-static";
+
 export async function GET() {
   const prompts = [
     {
@@ -26,7 +28,7 @@ export async function GET() {
       category: 'Coding',
       tags: ['debugging', 'code', 'errors'],
     },
-        {
+    {
       id: '4',
       title: 'Generate Social Media Captions',
       content: 'Write engaging captions for various social media platforms.',
@@ -34,7 +36,7 @@ export async function GET() {
       category: 'Marketing',
       tags: ['social media', 'captions', 'engagement'],
     },
-        {
+    {
       id: '5',
       title: 'Compose an Email',
       content: 'Draft professional emails for different scenarios.',

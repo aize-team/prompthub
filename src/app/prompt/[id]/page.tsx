@@ -1,13 +1,20 @@
 import { Metadata } from 'next';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { getPromptById, PromptDetail } from '@/lib/prompt-data'; // Import the function and type
+import { getPromptById, allPrompts, PromptDetail } from '@/lib/prompt-data'; // Import allPrompts
 import { notFound } from 'next/navigation'; // Import notFound for cleaner handling
 
 interface PromptDetailPageProps {
   params: Promise<{
     id: string; // Parameter name should match the folder name [id]
   }>;
+}
+
+// Generate static params for all possible prompt IDs
+export function generateStaticParams() {
+  return allPrompts.map((prompt) => ({
+    id: prompt.id,
+  }));
 }
 
 // Function to generate metadata dynamically
