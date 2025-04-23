@@ -5,16 +5,17 @@ import { getPromptById, PromptDetail } from '@/lib/prompt-data'; // Import the f
 import { notFound } from 'next/navigation'; // Import notFound for cleaner handling
 
 interface PromptDetailPageProps {
-  params: {
+  params: Promise<{
     id: string; // Parameter name should match the folder name [id]
-  };
+  }>;
 }
 
 // Function to generate metadata dynamically
 export async function generateMetadata({
   params,
 }: PromptDetailPageProps): Promise<Metadata> {
-  const prompt = getPromptById(params.id);
+  const { id } = await params;
+  const prompt = getPromptById(id);
 
   if (!prompt) {
     return {
@@ -29,7 +30,8 @@ export async function generateMetadata({
 }
 
 export default async function PromptDetailPage({ params }: PromptDetailPageProps) {
-  const prompt = getPromptById(params.id); // Fetch prompt using the centralized function
+  const { id } = await params; // Await and destructure the id from params
+  const prompt = getPromptById(id); // Fetch prompt using the centralized function
 
   // If prompt not found, use Next.js notFound function to render 404 page
   if (!prompt) {
@@ -39,7 +41,7 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
   return (
     <div className="container mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md min-h-[calc(100vh-200px)]">
       <h1 className="text-3xl md:text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">{prompt.title}</h1>
-      
+
       {/* Added a copy button (functional component needed) */}
       <div className="relative mb-6">
         <pre className="bg-gray-100 dark:bg-gray-900 p-4 rounded-md text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap overflow-x-auto">
@@ -59,13 +61,13 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
           <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-sm">
             <h3 className="font-semibold text-lg mb-2">Use Cases:</h3>
             {prompt.useCases && prompt.useCases.length > 0 ? (
-                <ul className="list-disc list-inside space-y-1">
+              <ul className="list-disc list-inside space-y-1">
                 {prompt.useCases.map((useCase, index) => (
-                    <li key={index} className="text-sm">{useCase}</li>
+                  <li key={index} className="text-sm">{useCase}</li>
                 ))}
-                </ul>
+              </ul>
             ) : (
-                <p className="text-sm text-gray-500 dark:text-gray-400">Not specified</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Not specified</p>
             )}
           </div>
           <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-sm">
@@ -75,15 +77,15 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
           <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-sm">
             <h3 className="font-semibold text-lg mb-2">Tags:</h3>
             {prompt.tags && prompt.tags.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2">
                 {prompt.tags.map((tag, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+                  <Badge key={index} variant="secondary" className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
                     {tag}
-                    </Badge>
+                  </Badge>
                 ))}
-                </div>
+              </div>
             ) : (
-                <p className="text-sm text-gray-500 dark:text-gray-400">No tags</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">No tags</p>
             )}
           </div>
         </div>

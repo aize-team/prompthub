@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 interface Prompt {
   id: string;
@@ -36,23 +36,16 @@ const prompts: Prompt[] = [
   },
 ];
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const { id } = params;
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
   const prompt = prompts.find((p) => p.id === id);
 
   if (!prompt) {
-    return new NextResponse(JSON.stringify({ error: 'Prompt not found' }), {
-      status: 404,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    return NextResponse.json({ error: 'Prompt not found' }, { status: 404 });
   }
 
-  return new NextResponse(JSON.stringify(prompt), {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  return NextResponse.json(prompt);
 }
