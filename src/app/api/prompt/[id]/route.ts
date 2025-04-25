@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = "force-static";
+
 interface Prompt {
   id: string;
   title: string;
@@ -35,6 +37,12 @@ const prompts: Prompt[] = [
     tags: ['tag5', 'tag1'],
   },
 ];
+
+export function generateStaticParams() {
+  return prompts.map((prompt) => ({
+    id: prompt.id,
+  }));
+}
 
 export async function GET(
   request: NextRequest,
