@@ -1,16 +1,35 @@
 'use client'; // This page needs client-side interactivity for filtering
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { allPrompts, getAllTags, PromptDetail } from '@/lib/prompt-data';
 import PromptCard from '@/components/PromptCard';
 import { Input } from '@/components/ui/input'; // Assuming Input component exists
 import { Badge } from '@/components/ui/badge';
 
 export default function ExplorePage() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const searchParams = useSearchParams();
+  const searchFromParams = searchParams.get('search') || '';
+  
+  const [searchTerm, setSearchTerm] = useState(searchFromParams);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   const allTags = useMemo(() => getAllTags(), []); // Get all unique tags once
+  
+  // Update search term when URL parameters change
+  useEffect(() => {
+    setSearchTerm(searchFromParams);
+    
+    // If the search term matches a tag exactly, select that tag
+    if (searchFromParams) {
+      const matchingTag = allTags.find(
+        tag => tag.toLowerCase() === searchFromParams.toLowerCase()
+      );
+      if (matchingTag) {
+        setSelectedTag(matchingTag);
+      }
+    }
+  }, [searchFromParams, allTags]);
 
   const filteredPrompts = useMemo(() => {
     const lowerSearchTerm = searchTerm.toLowerCase();
