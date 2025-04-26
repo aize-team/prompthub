@@ -130,7 +130,7 @@ const Home = () => {
         <div className="container mx-auto px-6">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold mb-4">{t('tags.popular')}</h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Discover prompts by popular categories and topics</p>
+            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{t('tags.discover')}</p>
           </div>
 
           <div className="flex flex-wrap justify-center gap-3 mb-8">
@@ -145,7 +145,7 @@ const Home = () => {
 
           <div className="text-center">
             <Link href="/explore" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium inline-flex items-center gap-1 transition-colors">
-              View all categories
+              {t('tags.view-all')}
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
@@ -159,7 +159,7 @@ const Home = () => {
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">{t('featured.title')}</h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Discover our collection of high-quality prompts created by the community</p>
+            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{t('featured.description')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -188,7 +188,7 @@ const Home = () => {
                     </div>
                     <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/80 flex justify-between items-center">
                       <span className="text-xs text-gray-500 dark:text-gray-400">AI Prompt</span>
-                      <span className="text-blue-600 dark:text-blue-400 text-sm font-medium group-hover:underline">View Details →</span>
+                      <span className="text-blue-600 dark:text-blue-400 text-sm font-medium group-hover:underline">{t('featured.view-details')} →</span>
                     </div>
                   </div>
                 </Link>
@@ -247,11 +247,11 @@ const Home = () => {
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center mb-12">
             <div>
-              <h2 className="text-3xl font-bold mb-2">Recent Additions</h2>
-              <p className="text-gray-600 dark:text-gray-400">The latest prompts added to our collection</p>
+              <h2 className="text-3xl font-bold mb-2">{t('recent.title')}</h2>
+              <p className="text-gray-600 dark:text-gray-400">{t('recent.description')}</p>
             </div>
             <Link href="/explore" className="mt-4 md:mt-0 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium inline-flex items-center gap-1 transition-colors">
-              View all prompts
+              {t('recent.view-all')}
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
@@ -294,8 +294,8 @@ const Home = () => {
             {/* Step 1 */}
             <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-6 relative border border-gray-100 dark:border-gray-700 shadow-md">
               <div className="absolute -top-4 -left-4 w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">1</div>
-              <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white pt-2">Find a Prompt</h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">Browse our collection to find a prompt that matches your needs or search by tags.</p>
+              <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white pt-2">{t('how.step1.title')}</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">{t('how.step1.description')}</p>
               <div className="text-blue-600 dark:text-blue-400">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mx-auto opacity-75" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -306,8 +306,8 @@ const Home = () => {
             {/* Step 2 */}
             <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-6 relative border border-gray-100 dark:border-gray-700 shadow-md">
               <div className="absolute -top-4 -left-4 w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">2</div>
-              <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white pt-2">Copy the Prompt</h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">Click on a prompt to view details and copy the full text with a single click.</p>
+              <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white pt-2">{t('how.step2.title')}</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">{t('how.step2.description')}</p>
               <div className="text-blue-600 dark:text-blue-400">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mx-auto opacity-75" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -318,8 +318,8 @@ const Home = () => {
             {/* Step 3 */}
             <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-6 relative border border-gray-100 dark:border-gray-700 shadow-md">
               <div className="absolute -top-4 -left-4 w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">3</div>
-              <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white pt-2">Use with Any AI</h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">Paste the prompt into your favorite AI platform and start generating amazing results.</p>
+              <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white pt-2">{t('how.step3.title')}</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">{t('how.step3.description')}</p>
               <div className="text-blue-600 dark:text-blue-400">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mx-auto opacity-75" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -345,11 +345,11 @@ const Home = () => {
       {/* Newsletter/CTA Section */}
       <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
         <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to enhance your AI interactions?</h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">Join our community and discover the power of well-crafted prompts</p>
+          <h2 className="text-3xl font-bold mb-4">{t('cta.title')}</h2>
+          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">{t('cta.description')}</p>
           <Link href="/explore" passHref>
             <button className="bg-white text-blue-600 font-semibold py-3 px-8 rounded-lg shadow-lg hover:bg-blue-50 transition-all duration-300 transform hover:scale-105">
-              Get Started Now
+              {t('cta.button')}
             </button>
           </Link>
         </div>

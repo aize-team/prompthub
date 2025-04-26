@@ -40,6 +40,8 @@ const translations = {
     
     // Popular tags
     'tags.popular': 'Popular Tags',
+    'tags.discover': 'Discover prompts by popular categories and topics',
+    'tags.view-all': 'View all categories',
     
     // What are prompts
     'prompts.what': 'What Exactly Are Prompts?',
@@ -47,12 +49,20 @@ const translations = {
     
     // Featured prompts
     'featured.title': 'Featured Prompts',
+    'featured.description': 'Discover our collection of high-quality prompts created by the community',
     'featured.view-all': 'View All Prompts',
+    'featured.view-details': 'View Details',
     
     // How to use
     'how.title': 'How to Use These Prompts',
     'how.description': 'Simply find a prompt that fits your needs, copy it, and paste it directly into your preferred LLM interface. Experiment and adapt them to achieve the best results!',
     'how.platforms': 'Common Platforms:',
+    'how.step1.title': 'Find a Prompt',
+    'how.step1.description': 'Browse our collection to find a prompt that matches your needs or search by tags.',
+    'how.step2.title': 'Copy the Prompt',
+    'how.step2.description': 'Click on a prompt to view details and copy the full text with a single click.',
+    'how.step3.title': 'Use with Any AI',
+    'how.step3.description': 'Paste the prompt into your favorite AI platform and start generating amazing results.',
     
     // Explore page
     'explore.title': 'Explore Prompts',
@@ -99,6 +109,16 @@ const translations = {
     'newsletter.description': 'Join our newsletter to receive new prompts, tips, and AI resources directly to your inbox',
     'newsletter.placeholder': 'Your email address',
     'newsletter.subscribe': 'Subscribe',
+    
+    // Recent Additions section
+    'recent.title': 'Recent Additions',
+    'recent.description': 'The latest prompts added to our collection',
+    'recent.view-all': 'View all prompts',
+    
+    // CTA section
+    'cta.title': 'Ready to enhance your AI interactions?',
+    'cta.description': 'Join our community and discover the power of well-crafted prompts',
+    'cta.button': 'Get Started Now',
   },
   fa: {
     // Header
@@ -116,6 +136,8 @@ const translations = {
     
     // Popular tags
     'tags.popular': 'تگ‌های محبوب',
+    'tags.discover': 'پرامپت‌ها را بر اساس دسته‌بندی‌ها و موضوعات محبوب کشف کنید',
+    'tags.view-all': 'مشاهده همه دسته‌بندی‌ها',
     
     // What are prompts
     'prompts.what': 'پرامپت‌ها دقیقاً چه هستند؟',
@@ -123,12 +145,20 @@ const translations = {
     
     // Featured prompts
     'featured.title': 'پرامپت‌های برجسته',
+    'featured.description': 'مجموعه‌ای از پرامپت‌های با کیفیت بالا که توسط جامعه ایجاد شده‌اند را کشف کنید',
     'featured.view-all': 'مشاهده همه پرامپت‌ها',
+    'featured.view-details': 'مشاهده جزئیات',
     
     // How to use
     'how.title': 'نحوه استفاده از این پرامپت‌ها',
     'how.description': 'به سادگی پرامپتی را که مناسب نیازهای شما است پیدا کنید، آن را کپی کرده و مستقیماً در رابط LLM مورد نظر خود قرار دهید. آزمایش کنید و آنها را برای دستیابی به بهترین نتایج تطبیق دهید!',
     'how.platforms': 'پلتفرم‌های رایج:',
+    'how.step1.title': 'یک پرامپت پیدا کنید',
+    'how.step1.description': 'مجموعه ما را برای یافتن پرامپتی که مطابق با نیازهای شماست جستجو کنید یا با تگ‌ها جستجو کنید.',
+    'how.step2.title': 'پرامپت را کپی کنید',
+    'how.step2.description': 'برای مشاهده جزئیات و کپی کردن متن کامل با یک کلیک، روی یک پرامپت کلیک کنید.',
+    'how.step3.title': 'با هر هوش مصنوعی استفاده کنید',
+    'how.step3.description': 'پرامپت را در پلتفرم هوش مصنوعی مورد علاقه خود قرار دهید و شروع به تولید نتایج شگفت‌انگیز کنید.',
     
     // Explore page
     'explore.title': 'کاوش پرامپت‌ها',
@@ -179,6 +209,16 @@ const translations = {
     'newsletter.description': 'به خبرنامه ما بپیوندید تا پرامپت‌های جدید، نکات و منابع هوش مصنوعی را مستقیماً در صندوق ورودی خود دریافت کنید',
     'newsletter.placeholder': 'آدرس ایمیل شما',
     'newsletter.subscribe': 'اشتراک',
+    
+    // Recent Additions section
+    'recent.title': 'افزوده‌های اخیر',
+    'recent.description': 'جدیدترین پرامپت‌های اضافه شده به مجموعه ما',
+    'recent.view-all': 'مشاهده همه پرامپت‌ها',
+    
+    // CTA section
+    'cta.title': 'آماده بهبود تعاملات هوش مصنوعی خود هستید؟',
+    'cta.description': 'به جامعه ما بپیوندید و قدرت پرامپت‌های خوب طراحی شده را کشف کنید',
+    'cta.button': 'همین حالا شروع کنید',
   },
 };
 
