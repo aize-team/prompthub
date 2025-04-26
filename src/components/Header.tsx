@@ -33,8 +33,8 @@ const Header = () => {
           {/* Logo and Brand Name */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center group">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold mr-3 shadow-md group-hover:shadow-lg transition-all duration-300 transform group-hover:scale-105">
-                A
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center mr-3 shadow-md group-hover:shadow-lg transition-all duration-300 transform group-hover:scale-105">
+                <img src="/logo.png" alt="Aize Logo" className="w-full h-full object-cover rounded-lg" />
               </div>
               <span className="text-xl font-bold text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                 Aize <span className="text-blue-600 dark:text-blue-400">|</span> Prompts
@@ -50,6 +50,12 @@ const Header = () => {
             </Link>
             <Link href="/explore" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors relative group py-2">
               {t('header.explore')}
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 dark:bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
+            </Link>
+            {/* Added Contribute Link */}
+            <Link href="/contribute" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors relative group py-2">
+              {/* TODO: Add 'header.contribute' key to your translation files */}
+              Contribute
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 dark:bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <Link href="https://chat.aize.dev/" target="_blank" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors relative group py-2">
@@ -102,6 +108,15 @@ const Header = () => {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {t('header.explore')}
+              </Link>
+               {/* Added Contribute Link */}
+              <Link 
+                href="/contribute" 
+                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                 {/* TODO: Add 'header.contribute' key to your translation files */}
+                 Contribute
               </Link>
               <Link 
                 href="https://chat.aize.dev/" 
