@@ -69,18 +69,31 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
                   <div>
                     <span className="text-xs text-gray-500 dark:text-gray-400">{t('prompt.ai-prompt')}</span>
                   </div>
-                  <button 
-                    className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 text-sm font-medium flex items-center gap-1 transition-colors"
-                    onClick={() => {
-                      navigator.clipboard.writeText(prompt.content);
-                      // You could add a toast notification here
-                    }}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                    {t('prompt.copy')}
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <a 
+                      href={`https://chat.aize.dev/?prompt=${encodeURIComponent(prompt.content)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-gradient-to-r from-amber-500 to-yellow-300 hover:from-amber-600 hover:to-yellow-400 text-white text-sm font-bold px-3 py-1 rounded flex items-center gap-1 transition-colors shadow-sm"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      {t('prompt.try-aize')}
+                    </a>
+                    <button 
+                      className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 text-sm font-medium flex items-center gap-1 transition-colors"
+                      onClick={() => {
+                        navigator.clipboard.writeText(prompt.content);
+                        // You could add a toast notification here
+                      }}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      {t('prompt.copy')}
+                    </button>
+                  </div>
                 </div>
                 <pre className="bg-white dark:bg-gray-800 p-6 text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap overflow-x-auto text-sm font-mono">
                   {prompt.content}

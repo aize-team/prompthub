@@ -229,6 +229,7 @@ const Home = () => {
                 <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-100 dark:border-gray-600">
                   <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Common Platforms:</h3>
                   <div className="flex flex-wrap gap-2">
+                    <a href="https://chat.aize.dev/" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-amber-500 to-yellow-300 dark:from-amber-600 dark:to-yellow-400 px-3 py-1 rounded text-sm font-medium text-white dark:text-white shadow-sm font-bold hover:from-amber-600 hover:to-yellow-400 transition-colors">Aize Chat</a>
                     <span className="bg-white dark:bg-gray-800 px-3 py-1 rounded text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm">OpenAI ChatGPT</span>
                     <span className="bg-white dark:bg-gray-800 px-3 py-1 rounded text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm">Google Gemini</span>
                     <span className="bg-white dark:bg-gray-800 px-3 py-1 rounded text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm">Anthropic Claude</span>
@@ -330,6 +331,7 @@ const Home = () => {
           <div className="mt-16 text-center">
             <p className="text-gray-700 dark:text-gray-300 mb-4">{t('how.platforms')}</p>
             <div className="flex flex-wrap justify-center gap-3">
+              <a href="https://chat.aize.dev/" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-amber-500 to-yellow-300 dark:from-amber-600 dark:to-yellow-400 px-4 py-2 rounded-lg text-sm font-medium text-white dark:text-white shadow-sm border border-amber-400 dark:border-amber-600 font-bold hover:from-amber-600 hover:to-yellow-400 transition-colors">Aize Chat</a>
               <span className="bg-white dark:bg-gray-900 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-200 dark:border-gray-700">OpenAI ChatGPT</span>
               <span className="bg-white dark:bg-gray-900 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-200 dark:border-gray-700">Google Gemini</span>
               <span className="bg-white dark:bg-gray-900 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-200 dark:border-gray-700">Anthropic Claude</span>
