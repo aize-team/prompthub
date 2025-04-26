@@ -13,16 +13,16 @@ const Footer = () => {
       <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900">
         <div className="container mx-auto px-6 py-12">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Stay updated with the latest prompts</h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">Join our newsletter to receive new prompts, tips, and AI resources directly to your inbox</p>
+            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">{t('newsletter.title')}</h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">{t('newsletter.description')}</p>
             <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
               <input 
                 type="email" 
-                placeholder="Your email address" 
-                className="flex-grow px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder={t('newsletter.placeholder')} 
+                className={`flex-grow px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 ${direction === 'rtl' ? 'text-right' : 'text-left'}`}
               />
               <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
-                Subscribe
+                {t('newsletter.subscribe')}
               </button>
             </div>
           </div>

@@ -92,6 +92,12 @@ const translations = {
     'footer.explore': 'Explore Prompts',
     'footer.signin': 'Sign In',
     'footer.rights': 'All rights reserved.',
+    
+    // Newsletter section
+    'newsletter.title': 'Stay updated with the latest prompts',
+    'newsletter.description': 'Join our newsletter to receive new prompts, tips, and AI resources directly to your inbox',
+    'newsletter.placeholder': 'Your email address',
+    'newsletter.subscribe': 'Subscribe',
   },
   fa: {
     // Header
@@ -145,6 +151,10 @@ const translations = {
     'prompt.step-2': 'آن را در پلتفرم هوش مصنوعی مورد نظر خود قرار دهید',
     'prompt.step-3': 'پرامپت را بر اساس نیازهای خاص خود سفارشی کنید',
     'prompt.similar': 'پرامپت‌های مشابه',
+    'prompt.coding': 'کدنویسی',
+    'prompt.development': 'توسعه',
+    'prompt.code-generation': 'تولید کد',
+    'prompt.programming': 'برنامه‌نویسی',
     
     // Footer
     'footer.services': 'خدمات',
@@ -161,6 +171,12 @@ const translations = {
     'footer.explore': 'کاوش پرامپت‌ها',
     'footer.signin': 'ورود',
     'footer.rights': 'تمامی حقوق محفوظ است.',
+    
+    // Newsletter section
+    'newsletter.title': 'با آخرین پرامپت‌ها به‌روز بمانید',
+    'newsletter.description': 'به خبرنامه ما بپیوندید تا پرامپت‌های جدید، نکات و منابع هوش مصنوعی را مستقیماً در صندوق ورودی خود دریافت کنید',
+    'newsletter.placeholder': 'آدرس ایمیل شما',
+    'newsletter.subscribe': 'اشتراک',
   },
 };
 

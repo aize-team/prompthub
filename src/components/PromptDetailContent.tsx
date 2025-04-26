@@ -105,11 +105,11 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
                   </div>
                   
                   {prompt.useCases && prompt.useCases.length > 0 ? (
-                    <ul className="space-y-2 pl-4">
+                    <ul className={`space-y-2 ${direction === 'rtl' ? 'pr-4' : 'pl-4'}`}>
                       {prompt.useCases.map((useCase, index) => (
                         <li key={index} className="flex items-start">
-                          <span className="text-blue-600 dark:text-blue-400 mr-2">&bull;</span>
-                          <span className="text-gray-700 dark:text-gray-300">{useCase}</span>
+                          <span className={`text-blue-600 dark:text-blue-400 ${direction === 'rtl' ? 'ml-2' : 'mr-2'}`}>&bull;</span>
+                          <span className="text-gray-700 dark:text-gray-300">{t(`prompt.${useCase.toLowerCase().replace(/\s+/g, '-')}`) || useCase}</span>
                         </li>
                       ))}
                     </ul>
@@ -131,15 +131,15 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
                   
                   <ol className="space-y-4">
                     <li className="flex items-start">
-                      <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium text-sm mr-3">1</span>
+                      <span className={`flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium text-sm ${direction === 'rtl' ? 'ml-3' : 'mr-3'}`}>1</span>
                       <span className="text-gray-700 dark:text-gray-300">{t('prompt.step-1')}</span>
                     </li>
                     <li className="flex items-start">
-                      <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium text-sm mr-3">2</span>
+                      <span className={`flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium text-sm ${direction === 'rtl' ? 'ml-3' : 'mr-3'}`}>2</span>
                       <span className="text-gray-700 dark:text-gray-300">{t('prompt.step-2')}</span>
                     </li>
                     <li className="flex items-start">
-                      <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium text-sm mr-3">3</span>
+                      <span className={`flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium text-sm ${direction === 'rtl' ? 'ml-3' : 'mr-3'}`}>3</span>
                       <span className="text-gray-700 dark:text-gray-300">{t('prompt.step-3')}</span>
                     </li>
                   </ol>
