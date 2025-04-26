@@ -1,50 +1,21 @@
 import { NextResponse } from 'next/server';
+import { db } from '@/lib/firebase';
 
 export const dynamic = "force-static";
 
 export async function GET() {
-  const prompts = [
-    {
-      id: '1',
-      title: 'Generate Marketing Slogans',
-      content: 'Create catchy and memorable slogans for a new product or service.',
-      useCases: ['Marketing', 'Branding'],
-      category: 'Marketing',
-      tags: ['slogans', 'branding', 'creativity'],
-    },
-    {
-      id: '2',
-      title: 'Write a Blog Post Outline',
-      content: 'Generate a structured outline for a blog post on a given topic.',
-      useCases: ['Content Creation', 'Blogging'],
-      category: 'Writing',
-      tags: ['blogging', 'outlines', 'content'],
-    },
-    {
-      id: '3',
-      title: 'Code Debugging',
-      content: 'Identify and fix errors in a provided code snippet.',
-      useCases: ['Software Development', 'Debugging'],
-      category: 'Coding',
-      tags: ['debugging', 'code', 'errors'],
-    },
-    {
-      id: '4',
-      title: 'Generate Social Media Captions',
-      content: 'Write engaging captions for various social media platforms.',
-      useCases: ['Social Media Marketing', 'Content Creation'],
-      category: 'Marketing',
-      tags: ['social media', 'captions', 'engagement'],
-    },
-    {
-      id: '5',
-      title: 'Compose an Email',
-      content: 'Draft professional emails for different scenarios.',
-      useCases: ['Communication', 'Professional Writing'],
-      category: 'Writing',
-      tags: ['email', 'communication', 'professional'],
-    },
-  ];
+  try {
+    const promptsRef = db.collection('prompts');
+    const snapshot = await promptsRef.get();
 
-  return NextResponse.json(prompts);
+    const prompts = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    return NextResponse.json(prompts);
+  } catch (error) {
+    console.error('Error fetching prompts:', error);
+    return NextResponse.json({ error: 'Failed to fetch prompts' }, { status: 500 });
+  }
 }
