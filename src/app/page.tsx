@@ -1,23 +1,41 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { allPrompts, getAllTags } from '@/lib/prompt-data';
+import { fetchPrompts, getAllTags, PromptDetail } from '@/lib/prompt-data';
 import { useLanguage } from '@/context/LanguageContext';
 
 const Home = () => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const [prompts, setPrompts] = useState<PromptDetail[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
   const { t, direction } = useLanguage();
 
-  // Get prompts for different sections
-  const popularPrompts = allPrompts.slice(0, 3);
-  const featuredPrompts = allPrompts.slice(3, 6);
-  const recentPrompts = [...allPrompts].sort(() => 0.5 - Math.random()).slice(0, 4);
+  // Fetch data on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const allPromptData = await fetchPrompts();
+        setPrompts(allPromptData);
+        const tagData = await getAllTags();
+        setTags(tagData.slice(0, 8));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Get all unique tags
-  const allTags = getAllTags().slice(0, 8);
+    fetchData();
+  }, []);
+
+  // Get prompts for different sections
+  const popularPrompts = prompts.slice(0, 3);
+  const featuredPrompts = prompts.slice(3, 6);
+  const recentPrompts = [...prompts].sort(() => 0.5 - Math.random()).slice(0, 4);
 
   // Handle search submission
   const handleSearch = (e: React.FormEvent) => {
@@ -26,6 +44,12 @@ const Home = () => {
       router.push(`/explore?search=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>;
+  }
 
   return (
     <div className={direction === 'rtl' ? 'rtl' : ''}>
@@ -134,7 +158,7 @@ const Home = () => {
           </div>
 
           <div className="flex flex-wrap justify-center gap-3 mb-8">
-            {allTags.map(tag => (
+            {tags.map((tag: string) => (
               <Link key={tag} href={`/explore?search=${encodeURIComponent(tag)}`}>
                 <span className="inline-block bg-white dark:bg-gray-800 px-5 py-3 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 hover:shadow-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 cursor-pointer border border-gray-200 dark:border-gray-700 transform hover:-translate-y-1">
                   #{tag}
@@ -163,7 +187,7 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredPrompts.map((prompt) => (
+            {featuredPrompts.map((prompt: PromptDetail) => (
               <div key={prompt.id} className="group">
                 <Link href={`/prompt/${prompt.id}`}>
                   <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col border border-gray-100 dark:border-gray-700 group-hover:border-blue-200 dark:group-hover:border-blue-800/50 transform group-hover:-translate-y-2">
@@ -179,7 +203,7 @@ const Home = () => {
                       </div>
                       <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">{prompt.content}</p>
                       <div className="flex flex-wrap gap-2 mt-auto">
-                        {prompt.tags.slice(0, 3).map((tag) => (
+                        {prompt.tags.slice(0, 3).map((tag: string) => (
                           <span key={tag} className="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                             #{tag}
                           </span>
@@ -259,7 +283,7 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {recentPrompts.map((prompt) => (
+            {recentPrompts.map((prompt: PromptDetail) => (
               <Link key={prompt.id} href={`/prompt/${prompt.id}`} className="block group">
                 <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col border border-gray-100 dark:border-gray-700 group-hover:border-blue-200 dark:group-hover:border-blue-800/50">
                   <div className="p-5 flex-grow">
@@ -268,7 +292,7 @@ const Home = () => {
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mb-3">{prompt.content}</p>
                     <div className="flex flex-wrap gap-1">
-                      {prompt.tags.slice(0, 2).map((tag) => (
+                      {prompt.tags.slice(0, 2).map((tag: string) => (
                         <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                           #{tag}
                         </span>
