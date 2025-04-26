@@ -4,12 +4,14 @@ import { useState, useMemo, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { allPrompts, getAllTags } from '@/lib/prompt-data';
 import PromptCard from '@/components/PromptCard';
-import { Input } from '@/components/ui/input'; // Assuming Input component exists
+import { Input } from '@/components/ui/input';
+import { useLanguage } from '@/context/LanguageContext';
 
 // Create a client component that uses useSearchParams
 function ExploreContent() {
   const searchParams = useSearchParams();
   const searchFromParams = searchParams.get('search') || '';
+  const { t, direction } = useLanguage();
 
   const [searchTerm, setSearchTerm] = useState(searchFromParams);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -56,9 +58,9 @@ function ExploreContent() {
   };
 
   return (
-    <div className="container mx-auto p-6 min-h-screen">
+    <div className={`container mx-auto p-6 min-h-screen ${direction === 'rtl' ? 'rtl' : ''}`}>
       <h1 className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
-        Explore Prompts
+        {t('explore.title') || 'Explore Prompts'}
       </h1>
 
       {/* Search and Filter Section */}
@@ -66,11 +68,11 @@ function ExploreContent() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
           {/* Search Input */}
           <div className="md:col-span-1">
-            <label htmlFor="search" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search Prompts</label>
+            <label htmlFor="search" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('explore.search-label')}</label>
             <Input
               id="search"
               type="text"
-              placeholder="Search by title, content, tag..."
+              placeholder={t('explore.search-placeholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full"
@@ -79,13 +81,13 @@ function ExploreContent() {
 
           {/* Tag Filter */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filter by Tag</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('explore.filter-by-tag')}</label>
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setSelectedTag(null)}
                 className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${selectedTag === null ? 'bg-purple-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'}`}
               >
-                All Tags
+                {t('explore.all-tags')}
               </button>
               {allTags.map((tag) => (
                 <button
@@ -110,8 +112,8 @@ function ExploreContent() {
         </div>
       ) : (
         <div className="text-center py-12">
-          <p className="text-xl text-gray-600 dark:text-gray-400">No prompts found matching your criteria.</p>
-          {searchTerm && <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Try broadening your search or clearing the filters.</p>}
+          <p className="text-xl text-gray-600 dark:text-gray-400">{t('explore.no-prompts')}</p>
+          {searchTerm && <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">{t('explore.broaden-search')}</p>}
         </div>
       )}
     </div>
@@ -120,10 +122,12 @@ function ExploreContent() {
 
 // Loading component for Suspense fallback
 function ExploreLoading() {
+  const { t } = useLanguage();
+  
   return (
     <div className="container mx-auto p-6 min-h-screen">
       <h1 className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
-        Explore Prompts
+        {t('explore.title') || 'Explore Prompts'}
       </h1>
       <div className="flex justify-center items-center py-20">
         <div className="animate-pulse flex flex-col items-center">

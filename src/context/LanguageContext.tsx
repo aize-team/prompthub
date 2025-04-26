@@ -54,6 +54,29 @@ const translations = {
     'how.description': 'Simply find a prompt that fits your needs, copy it, and paste it directly into your preferred LLM interface. Experiment and adapt them to achieve the best results!',
     'how.platforms': 'Common Platforms:',
     
+    // Explore page
+    'explore.title': 'Explore Prompts',
+    'explore.search-label': 'Search Prompts',
+    'explore.search-placeholder': 'Search by title, content, tag...',
+    'explore.filter-by-tag': 'Filter by Tag',
+    'explore.all-tags': 'All Tags',
+    'explore.no-prompts': 'No prompts found matching your criteria.',
+    'explore.broaden-search': 'Try broadening your search or clearing the filters.',
+    
+    // Prompt detail page
+    'prompt.uncategorized': 'Uncategorized',
+    'prompt.added-recently': 'Added recently',
+    'prompt.ai-prompt': 'AI Prompt',
+    'prompt.copy': 'Copy',
+    'prompt.details': 'Details',
+    'prompt.use-cases': 'Use Cases',
+    'prompt.no-use-cases': 'No specific use cases provided for this prompt.',
+    'prompt.how-to-use': 'How to Use',
+    'prompt.step-1': 'Copy the prompt using the copy button above',
+    'prompt.step-2': 'Paste it into your preferred AI platform',
+    'prompt.step-3': 'Customize the prompt as needed for your specific requirements',
+    'prompt.similar': 'Similar Prompts',
+    
     // Footer
     'footer.services': 'Services',
     'footer.smart-chat': 'Smart Chat Panel',
@@ -99,6 +122,29 @@ const translations = {
     'how.title': 'نحوه استفاده از این پرامپت‌ها',
     'how.description': 'به سادگی پرامپتی را که مناسب نیازهای شما است پیدا کنید، آن را کپی کرده و مستقیماً در رابط LLM مورد نظر خود قرار دهید. آزمایش کنید و آنها را برای دستیابی به بهترین نتایج تطبیق دهید!',
     'how.platforms': 'پلتفرم‌های رایج:',
+    
+    // Explore page
+    'explore.title': 'کاوش پرامپت‌ها',
+    'explore.search-label': 'جستجوی پرامپت‌ها',
+    'explore.search-placeholder': 'جستجو بر اساس عنوان، محتوا، تگ...',
+    'explore.filter-by-tag': 'فیلتر بر اساس تگ',
+    'explore.all-tags': 'همه تگ‌ها',
+    'explore.no-prompts': 'هیچ پرامپتی مطابق با معیارهای شما یافت نشد.',
+    'explore.broaden-search': 'جستجوی خود را گسترده‌تر کنید یا فیلترها را پاک کنید.',
+    
+    // Prompt detail page
+    'prompt.uncategorized': 'دسته‌بندی نشده',
+    'prompt.added-recently': 'اخیراً اضافه شده',
+    'prompt.ai-prompt': 'پرامپت هوش مصنوعی',
+    'prompt.copy': 'کپی',
+    'prompt.details': 'جزئیات',
+    'prompt.use-cases': 'موارد استفاده',
+    'prompt.no-use-cases': 'موارد استفاده خاصی برای این پرامپت ارائه نشده است.',
+    'prompt.how-to-use': 'نحوه استفاده',
+    'prompt.step-1': 'پرامپت را با استفاده از دکمه کپی در بالا کپی کنید',
+    'prompt.step-2': 'آن را در پلتفرم هوش مصنوعی مورد نظر خود قرار دهید',
+    'prompt.step-3': 'پرامپت را بر اساس نیازهای خاص خود سفارشی کنید',
+    'prompt.similar': 'پرامپت‌های مشابه',
     
     // Footer
     'footer.services': 'خدمات',
