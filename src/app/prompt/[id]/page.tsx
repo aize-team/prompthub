@@ -20,7 +20,7 @@ export function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: PromptDetailPageProps): Promise<Metadata> {
-  const id = params.id;
+  const { id } = await params;
   const prompt = getPromptById(id);
 
   if (!prompt) {
@@ -37,7 +37,7 @@ export async function generateMetadata({
 
 // Main export function
 export default async function PromptDetailPage({ params }: PromptDetailPageProps) {
-  const id = params.id;
+  const { id } = await params;
   const prompt = getPromptById(id);
 
   // If prompt not found, use Next.js notFound function to render 404 page
