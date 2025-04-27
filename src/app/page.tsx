@@ -3,39 +3,54 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { fetchPrompts, getAllTags, PromptDetail } from '@/lib/prompt-data';
+import { PromptDetail } from '@/lib/prompt-data';
 import { useLanguage } from '@/context/LanguageContext';
+import { usePromptData } from '@/hooks/usePromptData';
 
 const Home = () => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
-  const [prompts, setPrompts] = useState<PromptDetail[]>([]);
-  const [tags, setTags] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
   const { t, direction } = useLanguage();
 
-  // Fetch data on component mount
+  // Use our custom hook for data fetching with lazy loading and caching
+  const {
+    loading,
+    getPrompts,
+    getTags
+  } = usePromptData();
+
+  // State for each section's data
+  const [popularPrompts, setPopularPrompts] = useState<PromptDetail[]>([]);
+  const [featuredPrompts, setFeaturedPrompts] = useState<PromptDetail[]>([]);
+  const [recentPrompts, setRecentPrompts] = useState<PromptDetail[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+
+  // Fetch data for each section on component mount
   useEffect(() => {
-    const fetchData = async () => {
+    const loadSectionData = async () => {
       try {
-        const allPromptData = await fetchPrompts();
-        setPrompts(allPromptData);
-        const tagData = await getAllTags();
-        setTags(tagData.slice(0, 8));
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
+        // Load popular prompts (first 3)
+        const popular = await getPrompts(3, 0, 'popular');
+        setPopularPrompts(popular);
+
+        // Load featured prompts (next 3)
+        const featured = await getPrompts(3, 3);
+        setFeaturedPrompts(featured);
+
+        // Load recent prompts (random 4)
+        const recent = await getPrompts(4, 0, 'recent');
+        setRecentPrompts(recent);
+
+        // Load tags (first 8)
+        const tagData = await getTags(8);
+        setTags(tagData);
+      } catch (err) {
+        console.error('Error loading section data:', err);
       }
     };
 
-    fetchData();
-  }, []);
-
-  // Get prompts for different sections
-  const popularPrompts = prompts.slice(0, 3);
-  const featuredPrompts = prompts.slice(3, 6);
-  const recentPrompts = [...prompts].sort(() => 0.5 - Math.random()).slice(0, 4);
+    loadSectionData();
+  }, [getPrompts, getTags]);
 
   // Handle search submission
   const handleSearch = (e: React.FormEvent) => {
@@ -44,6 +59,8 @@ const Home = () => {
       router.push(`/explore?search=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
+
+
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">
@@ -103,11 +120,6 @@ const Home = () => {
                 <Link href="/explore" passHref>
                   <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 px-8 rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105">
                     {t('hero.explore-all')}
-                  </button>
-                </Link>
-                <Link href="/signin" passHref>
-                  <button className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 font-medium py-3 px-8 rounded-full shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 ease-in-out transform hover:scale-105">
-                    {t('header.signin')}
                   </button>
                 </Link>
               </div>
