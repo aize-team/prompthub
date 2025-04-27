@@ -1,4 +1,4 @@
-'use client'; // This page needs client-side data fetching and interactivity
+'use client';
 
 import { useState, useEffect } from 'react';
 import { getPromptById, PromptDetail } from '@/lib/prompt-data'; // Import async fetch function
@@ -10,7 +10,7 @@ import { useLanguage } from '@/context/LanguageContext';
 function PromptDetailLoading() {
   const { t } = useLanguage();
   return (
-     <div className="container mx-auto p-6 min-h-screen">
+    <div className="container mx-auto p-6 min-h-screen">
       <h1 className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
         {t('promptDetail.title') || 'Prompt Details'}
       </h1>
@@ -26,7 +26,7 @@ function PromptDetailLoading() {
 }
 
 // Main export function
-export default async function PromptDetailPage(props: any) {
+export default function PromptDetailPage(props: any) {
   const params = props.params;
   const id = params.id;
   const { t } = useLanguage();
@@ -63,7 +63,7 @@ export default async function PromptDetailPage(props: any) {
   if (error) {
     return (
       <div className="container mx-auto p-6 min-h-screen text-center text-red-500">
-         <h1 className="text-4xl font-bold mb-8">{t('promptDetail.title') || 'Prompt Details'}</h1>
+        <h1 className="text-4xl font-bold mb-8">{t('promptDetail.title') || 'Prompt Details'}</h1>
         <p>{error}</p>
       </div>
     );
@@ -71,9 +71,9 @@ export default async function PromptDetailPage(props: any) {
 
   // If prompt is still null/undefined after loading (should be caught by notFound, but as a fallback)
   if (!prompt) {
-       return (
+    return (
       <div className="container mx-auto p-6 min-h-screen text-center text-red-500">
-         <h1 className="text-4xl font-bold mb-8">{t('promptDetail.title') || 'Prompt Details'}</h1>
+        <h1 className="text-4xl font-bold mb-8">{t('promptDetail.title') || 'Prompt Details'}</h1>
         <p>Prompt not found.</p>
       </div>
     );
