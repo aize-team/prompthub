@@ -3,46 +3,53 @@ import React from 'react';
 const ContributePage = () => {
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Contribute Your Prompts</h1>
-      <p className="mb-4 text-lg">
-        Help us grow our collection of effective prompts by sharing your own!
-        Your contributions can help others unlock the full potential of LLMs.
-      </p>
-      <h2 className="text-2xl font-semibold mb-4">How to Contribute</h2>
-      <div className="prose dark:prose-invert">
-        <p>To add your prompts to PromptHub, follow these steps:</p>
-        <ol>
-          <li>
-            <strong>Fork the repository:</strong> Find our project repository on GitHub and create your own fork.
-          </li>
-          <li>
-            <strong>Clone your fork:</strong> Clone your forked repository to your local machine.
-            <pre><code className="bg-gray-100 p-1 rounded text-sm">git clone [your-fork-url]</code></pre>
-          </li>
-          <li>
-            <strong>Add your prompt data:</strong> Open the file <code className="bg-gray-100 p-1 rounded text-sm">src/lib/prompt-data.ts</code>.
-            Add your prompt object to the existing array, following the same structure.
-            Make sure to give it a unique <code>id</code>.
-          </li>
-          <li>
-            <strong>Commit your changes:</strong> Save the file and commit your changes with a clear message.
-            <pre><code className="bg-gray-100 p-1 rounded text-sm">git add src/lib/prompt-data.ts
-git commit -m "feat: Add new prompt about [brief description]"</code></pre>
-          </li>
-          <li>
-            <strong>Push to your fork:</strong> Push your committed changes to your fork on GitHub.
-            <pre><code className="bg-gray-100 p-1 rounded text-sm">git push origin main</code></pre>
-          </li>
-          <li>
-            <strong>Open a Pull Request:</strong> Go to the original project repository on GitHub and open a new pull request from your fork.
-            Provide a clear description of the prompt you added.
-          </li>
-        </ol>
-        <p>
-          Our team will review your submission, and if it meets the guidelines, we will merge it into the main project.
-          Thank you for contributing!
-        </p>
-      </div>
+      <h1 className="text-3xl font-bold mb-6">Submit Your Prompt</h1>
+      <form className="space-y-4">
+        <div>
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Prompt Title
+          </label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+            placeholder="Enter a title for your prompt"
+          />
+        </div>
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Description
+          </label>
+          <textarea
+            id="description"
+            name="description"
+            rows={3}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+            placeholder="Describe your prompt and its intended use"
+          ></textarea>
+        </div>
+        <div>
+          <label htmlFor="prompt" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Prompt Text
+          </label>
+          <textarea
+            id="prompt"
+            name="prompt"
+            rows={6}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+            placeholder="Enter the full prompt text here"
+          ></textarea>
+        </div>
+        <div>
+          <button
+            type="submit"
+            className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          >
+            Submit Prompt
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

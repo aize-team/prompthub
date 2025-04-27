@@ -3,10 +3,30 @@
 import { Badge } from '@/components/ui/badge';
 import { PromptDetail } from '@/lib/prompt-data';
 import { useLanguage } from '@/context/LanguageContext';
+import { useState } from 'react'; // Import useState for button interaction (future)
 
 export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }) {
   const { t, direction } = useLanguage();
   
+  // Placeholder states for likes and copies (will be replaced by API data)
+  const [likes, setLikes] = useState(prompt.likes || 0);
+  const [copies, setCopies] = useState(prompt.copies || 0);
+
+  // Function to handle like button click (placeholder)
+  const handleLike = () => {
+    // TODO: Implement API call to increment likes
+    setLikes(likes + 1);
+    // Add visual feedback (e.g., changing button color) and handle backend update
+  };
+
+  // Function to handle copy button click (placeholder - existing logic is fine)
+  const handleCopy = () => {
+    navigator.clipboard.writeText(prompt.content);
+    // TODO: Implement API call to increment copies
+    setCopies(copies + 1);
+    // You could add a toast notification here
+  };
+
   return (
     <div className={`min-h-[calc(100vh-200px)] ${direction === 'rtl' ? 'rtl' : ''}`}>
       {/* Hero section with gradient background */}
@@ -32,8 +52,8 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
               </div>
             )}
             
-            {/* Category and metadata */}
-            <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-8">
+            {/* Category, Author, and metadata */}
+            <div className="flex flex-wrap items-center text-sm text-gray-600 dark:text-gray-400 mb-8 gap-4">
               <div className="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
@@ -47,6 +67,18 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
                 </svg>
                 <span>{t('prompt.added-recently')}</span>
               </div>
+              {/* Author */} {/* Added Author Display Here */}
+              {prompt.author && (
+                <>
+                  <span className="mx-3">&bull;</span>
+                  <div className="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span>By {prompt.author}</span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -57,7 +89,7 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
             {/* Prompt content with copy button */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700 mb-12">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700 mb-8"> {/* Reduced mb from 12 to 8 */}
               <div className="h-2 bg-gradient-to-r from-blue-500 to-purple-600"></div>
               <div className="p-1">
                 <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-900/50 px-4 py-2 border-b border-gray-100 dark:border-gray-700">
@@ -81,12 +113,10 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
                       </svg>
                       {t('prompt.try-aize')}
                     </a>
+                    {/* Copy button - now calls handleCopy */}
                     <button 
                       className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 text-sm font-medium flex items-center gap-1 transition-colors"
-                      onClick={() => {
-                        navigator.clipboard.writeText(prompt.content);
-                        // You could add a toast notification here
-                      }}
+                      onClick={handleCopy}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -101,6 +131,28 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
               </div>
             </div>
             
+            {/* Interaction Stats (Likes and Copies) */}
+            <div className="flex items-center space-x-6 text-gray-600 dark:text-gray-400 mb-12">
+              {/* Likes */} {/* Added Likes Interaction Here */}
+              <button 
+                className="flex items-center text-sm font-medium hover:text-pink-600 dark:hover:text-pink-400 transition-colors"
+                onClick={handleLike}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                <span>{likes} {t('prompt.likes')}</span> {/* Using state variable */} 
+              </button>
+              
+              {/* Copies */} {/* Added Copies Interaction Here */}
+              <div className="flex items-center text-sm font-medium">
+                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                 </svg>
+                 <span>{copies} {t('prompt.copies')}</span> {/* Using state variable */} 
+              </div>
+            </div>
+
             {/* Details section */}
             <div className="mb-12">
               <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">{t('prompt.details')}</h2>

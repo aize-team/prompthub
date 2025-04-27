@@ -1,0 +1,90 @@
+[
+  {
+    "id": "1",
+    "title": "Creative Writing Assistant",
+    "content": "You are an expert creative writing assistant. Help me craft a compelling short story about [THEME] that incorporates elements of [GENRE] and features a character who [CHARACTER TRAIT]. The story should be approximately [LENGTH] and suitable for [AUDIENCE].",
+    "useCases": ["writing", "creative", "storytelling"],
+    "category": "Creative",
+    "tags": ["writing", "creative", "storytelling", "fiction"],
+    "author": "Unknown",
+    "likes": 0,
+    "copies": 0
+  },
+  {
+    "id": "2",
+    "title": "Code Reviewer",
+    "content": "Act as an experienced software engineer. Review my code and provide feedback on best practices, potential bugs, performance issues, and maintainability concerns. Focus on [LANGUAGE/FRAMEWORK] conventions.",
+    "useCases": ["programming", "code review", "software engineering"],
+    "category": "Development",
+    "tags": ["coding", "programming", "review", "software"],
+    "author": "Unknown",
+    "likes": 0,
+    "copies": 0
+  },
+  {
+    "id": "3",
+    "title": "Business Proposal Generator",
+    "content": "Help me create a professional business proposal for [PRODUCT/SERVICE] targeting [AUDIENCE]. Include sections for executive summary, problem statement, proposed solution, market analysis, competitive advantage, pricing strategy, and implementation timeline.",
+    "useCases": ["business", "proposal", "marketing"],
+    "category": "Business",
+    "tags": ["business", "proposal", "marketing", "sales"],
+    "author": "Unknown",
+    "likes": 0,
+    "copies": 0
+  },
+  {
+    "id": "4",
+    "title": "Recipe Creator",
+    "content": "Create a detailed recipe for a [DISH TYPE] that uses [INGREDIENT LIST]. Include preparation time, cooking time, difficulty level, ingredients, detailed step-by-step instructions, nutritional information, and serving suggestions.",
+    "useCases": ["cooking", "recipes", "meal planning"],
+    "category": "Food",
+    "tags": ["cooking", "recipe", "food", "culinary"],
+    "author": "Unknown",
+    "likes": 0,
+    "copies": 0
+  },
+  {
+    "id": "5",
+    "title": "Data Analysis Assistant",
+    "content": "Act as a data analysis expert. Help me analyze the following [DATASET/DESCRIPTION] to identify patterns, trends, and insights. Suggest appropriate statistical methods and visualizations. Also recommend potential actions based on the findings.",
+    "useCases": ["data analysis", "statistics", "research"],
+    "category": "Analytics",
+    "tags": ["data", "analysis", "statistics", "research"],
+    "author": "Unknown",
+    "likes": 0,
+    "copies": 0
+  },
+  {
+    "id": "6",
+    "title": "Language Tutor",
+    "content": "You are an experienced [LANGUAGE] tutor. Create a structured lesson about [TOPIC/GRAMMAR POINT] at a [LEVEL] level. Include explanations, examples, common mistakes to avoid, and practice exercises with answers.",
+    "useCases": ["language learning", "education", "tutoring"],
+    "category": "Education",
+    "tags": ["language", "learning", "education", "tutor"],
+    "author": "Unknown",
+    "likes": 0,
+    "copies": 0
+  },
+  {
+    "id": "7",
+    "title": "Travel Itinerary Planner",
+    "content": "Create a detailed [NUMBER] day travel itinerary for [DESTINATION] for a [TYPE OF TRAVELER]. Include recommendations for accommodations, transportation, activities, attractions, restaurants, and estimated costs. Consider the [SEASON/MONTH] of travel and [SPECIAL REQUIREMENTS] in your planning.",
+    "useCases": ["travel", "planning", "itinerary"],
+    "category": "Travel",
+    "tags": ["travel", "vacation", "planning", "itinerary"],
+    "author": "Unknown",
+    "likes": 0,
+    "copies": 0
+  },
+  {
+    "id": "8",
+    "title": "Personal Fitness Coach",
+    "content": "Act as a professional fitness coach. Design a [DURATION] workout program for [GOAL] targeting [SPECIFIC BODY PARTS/FITNESS ELEMENTS]. The workout should be suitable for [FITNESS LEVEL] with [EQUIPMENT AVAILABLE]. Include exercise descriptions, sets, reps, rest periods, and progression plan.",
+    "useCases": ["fitness", "health", "exercise"],
+    "category": "Health",
+    "tags": ["fitness", "workout", "health", "exercise"],
+    "author": "Unknown",
+    "likes": 0,
+    "copies": 0
+  }
+]
