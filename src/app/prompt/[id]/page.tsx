@@ -26,8 +26,9 @@ function PromptDetailLoading() {
 }
 
 // Main export function
-export default function PromptDetailPage(props: { params: { id: string } }) {
-  const id = props.params.id;
+export default async function PromptDetailPage(props: any) {
+  const params = props.params;
+  const id = params.id;
   const { t } = useLanguage();
 
   const [prompt, setPrompt] = useState<PromptDetail | undefined>(undefined);
@@ -94,10 +95,12 @@ export default function PromptDetailPage(props: { params: { id: string } }) {
 import { Metadata } from 'next';
 import { getPromptById } from '@/lib/prompt-data'; // Assuming getPromptById can also work server-side or you have a server-side fetching equivalent
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata(props: any): Promise<Metadata> {
+  const params = props.params;
+  const id = params.id;
   // This part still needs to fetch data, ideally server-side for performance/SEO
   // If getPromptById is only client-side, you'd need a different server-side fetch here.
-  const prompt = await getPromptById(params.id);
+  const prompt = await getPromptById(id);
 
   if (!prompt) {
     return {

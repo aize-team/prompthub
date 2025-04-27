@@ -45,13 +45,9 @@ export function generateStaticParams() {
   }));
 }
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, context: any) {
+  const { id } = context.params;
   try {
-    const { id } = params;
-
     // Query Firestore for the prompt with the given ID
     const promptDoc = await db.collection('prompts').doc(id).get();
 
