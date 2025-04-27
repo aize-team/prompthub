@@ -4,12 +4,17 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import LanguageSwitcher from './LanguageSwitcher';
+import { useAuthModal } from '@/context/AuthModalContext'; // Import the hook
+import { useSession, signOut } from 'next-auth/react'; // Import hooks for session management
 
 const Header = () => {
   const { t, direction } = useLanguage();
+  const { openModal } = useAuthModal(); // Use the hook
+  const { data: session, status } = useSession(); // Get session data
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+
   // Handle scroll effect for header
   useEffect(() => {
     const handleScroll = () => {
@@ -19,11 +24,16 @@ const Header = () => {
         setIsScrolled(false);
       }
     };
-    
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  
+
+  const handleSignOut = () => {
+    signOut();
+    setIsMobileMenuOpen(false); // Close mobile menu on sign out
+  };
+
   return (
     <header className={`sticky top-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm transition-all duration-300 ${
       isScrolled ? 'shadow-md' : 'border-b border-gray-200 dark:border-gray-800'
@@ -64,18 +74,28 @@ const Header = () => {
             </Link>
           </nav>
 
-          {/* Sign In Button and Language Switcher */}
+          {/* Sign In/Sign Out Button and Language Switcher */}
           <div className="hidden md:flex items-center space-x-4">
             <LanguageSwitcher />
-            <Link href="/signin" passHref>
-              <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg transform hover:translate-y-[-2px]">
+            {status === 'authenticated' ? (
+               <button
+                 onClick={handleSignOut}
+                 className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg transform hover:translate-y-[-2px]"
+               >
+                 Sign Out
+               </button>
+            ) : (
+              <button
+                onClick={openModal} // Call openModal on click
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg transform hover:translate-y-[-2px]"
+              >
                 {t('header.signin')}
               </button>
-            </Link>
+            )}
           </div>
-          
+
           {/* Mobile Menu Button */}
-          <button 
+          <button
             className="md:hidden text-gray-700 dark:text-gray-300 focus:outline-none"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
@@ -90,53 +110,63 @@ const Header = () => {
             )}
           </button>
         </div>
-        
+
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
             <nav className="flex flex-col space-y-4 mb-6">
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {t('header.home')}
               </Link>
-              <Link 
-                href="/explore" 
+              <Link
+                href="/explore"
                 className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {t('header.explore')}
               </Link>
                {/* Added Contribute Link */}
-              <Link 
-                href="/contribute" 
+              <Link
+                href="/contribute"
                 className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                  {/* TODO: Add 'header.contribute' key to your translation files */}
                  Contribute
               </Link>
-              <Link 
-                href="https://chat.aize.dev/" 
-                target="_blank" 
+              <Link
+                href="https://chat.aize.dev/"
+                target="_blank"
                 className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {t('header.chat')}
               </Link>
             </nav>
-            
+
             <div className="flex flex-col space-y-4 pb-2">
               <div className="flex justify-center">
                 <LanguageSwitcher />
               </div>
-              <Link href="/signin" passHref onClick={() => setIsMobileMenuOpen(false)}>
-                <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-md">
-                  {t('header.signin')}
+               {status === 'authenticated' ? (
+                <button
+                  onClick={handleSignOut}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-md"
+                >
+                  Sign Out
                 </button>
-              </Link>
+               ) : (
+                 <button
+                   onClick={() => { openModal(); setIsMobileMenuOpen(false); }} // Open modal and close mobile menu
+                   className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-md"
+                 >
+                   {t('header.signin')}
+                 </button>
+               )}
             </div>
           </div>
         )}

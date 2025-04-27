@@ -6,8 +6,8 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-// Import Language Provider
-import { LanguageProvider } from "@/context/LanguageContext";
+// Import Providers (Client Component)
+import Providers from '@/components/Providers';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,13 +34,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        <LanguageProvider>
+        <Providers> {/* Wrap with Providers (Client Component) */}
           <Header />
           <main className="flex-grow">
             {children}
           </main>
           <Footer />
-        </LanguageProvider>
+        </Providers>
       </body>
     </html>
   );
