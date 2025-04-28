@@ -6,26 +6,23 @@ const dataFilePath = path.join(process.cwd(), 'data', 'prompts.json');
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: any
 ) {
-  const { id } = params;
+  const { id } = context.params;
 
   try {
     // Read the data file
     const fileContent = readFileSync(dataFilePath, 'utf-8');
     const prompts = JSON.parse(fileContent);
 
-    // Find the prompt by ID
     const promptIndex = prompts.findIndex((p: any) => p.id === id);
 
     if (promptIndex === -1) {
       return NextResponse.json({ message: 'Prompt not found' }, { status: 404 });
     }
 
-    // Increment the copy count
     prompts[promptIndex].copies = (prompts[promptIndex].copies || 0) + 1;
 
-    // Write the updated data back to the file
     writeFileSync(dataFilePath, JSON.stringify(prompts, null, 2), 'utf-8');
 
     return NextResponse.json({ message: 'Copy count updated', copies: prompts[promptIndex].copies });

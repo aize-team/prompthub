@@ -9,7 +9,7 @@ type CacheStore<T> = {
   error: Error | null;
 };
 
-// Global cache objects
+// Global cache objects with explicit type annotations
 const promptsCache: CacheStore<PromptDetail[]> = {
   data: null,
   timestamp: 0,
@@ -71,18 +71,18 @@ export function usePromptData() {
           'Expires': '0'
         }
       });
-      
+
       if (!apiResponse.ok) {
         throw new Error(`Failed to fetch prompts. Status: ${apiResponse.status}`);
       }
-      
+
       const data = await apiResponse.json();
-      
+
       // Update cache
       promptsCache.data = data;
       promptsCache.timestamp = Date.now();
       promptsCache.error = null;
-      
+
       setPrompts(data);
       console.log(`Cached ${data.length} prompts at ${new Date().toLocaleTimeString()}`);
     } catch (err) {
@@ -114,12 +114,12 @@ export function usePromptData() {
         prompt.tags.forEach(tag => tagSet.add(tag.toLowerCase()));
       });
       const uniqueTags = Array.from(tagSet).sort();
-      
+
       // Update cache
       tagsCache.data = uniqueTags;
       tagsCache.timestamp = Date.now();
       tagsCache.error = null;
-      
+
       setTags(uniqueTags);
       return;
     }
@@ -128,21 +128,21 @@ export function usePromptData() {
     tagsCache.loading = true;
 
     try {
-      // Fetch all prompts and extract tags
       await fetchPromptsWithCache();
-      
-      if (promptsCache.data) {
+
+      const prompts = (promptsCache.data || []) as PromptDetail[];
+      if (prompts && Array.isArray(prompts)) {
         const tagSet = new Set<PromptTag>();
-        promptsCache.data.forEach(prompt => {
+        prompts.forEach((prompt: PromptDetail) => {
           prompt.tags.forEach(tag => tagSet.add(tag.toLowerCase()));
         });
         const uniqueTags = Array.from(tagSet).sort();
-        
+
         // Update cache
         tagsCache.data = uniqueTags;
         tagsCache.timestamp = Date.now();
         tagsCache.error = null;
-        
+
         setTags(uniqueTags);
       }
     } catch (err) {
@@ -164,7 +164,7 @@ export function usePromptData() {
 
       if (promptsCache.data) {
         let sortedPrompts = [...promptsCache.data];
-        
+
         // Apply sorting if specified
         if (sortBy === 'popular') {
           sortedPrompts.sort((a, b) => b.likes - a.likes);
@@ -172,10 +172,10 @@ export function usePromptData() {
           // Assuming we'd have a date field, for now just randomize
           sortedPrompts.sort(() => 0.5 - Math.random());
         }
-        
+
         return sortedPrompts.slice(offset, offset + count);
       }
-      
+
       return [];
     },
     [fetchPromptsWithCache, loading]
@@ -191,7 +191,7 @@ export function usePromptData() {
       if (tagsCache.data) {
         return tagsCache.data.slice(0, count);
       }
-      
+
       return [];
     },
     [fetchTagsWithCache, loading]

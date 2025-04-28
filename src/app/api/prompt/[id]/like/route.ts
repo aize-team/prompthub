@@ -6,9 +6,9 @@ const dataFilePath = path.join(process.cwd(), 'data', 'prompts.json');
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: any
 ) {
-  const { id } = params;
+  const { id } = context.params;
 
   try {
     // Read the data file

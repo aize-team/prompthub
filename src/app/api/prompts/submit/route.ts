@@ -2,20 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
 import { getServerSession } from 'next-auth/next';
 import { v4 as uuidv4 } from 'uuid';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
     // Check if user is authenticated
     const session = await getServerSession(authOptions);
-    
+
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse request body
     const data = await request.json();
-    
+
     // Validate required fields
     if (!data.title || !data.content) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 });
