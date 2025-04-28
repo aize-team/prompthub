@@ -1,8 +1,7 @@
 import NextAuth from "next-auth"
 import KeycloakProvider from "next-auth/providers/keycloak";
-import { NextAuthOptions } from "next-auth";
 
-export const authOptions: NextAuthOptions = {
+const handler = NextAuth({
   providers: [
     KeycloakProvider({
       clientId: process.env.KEYCLOAK_ID as string,
@@ -10,8 +9,10 @@ export const authOptions: NextAuthOptions = {
       issuer: process.env.KEYCLOAK_ISSUER,
     }),
   ],
-};
-
-const handler = NextAuth(authOptions);
+  // Add other NextAuth configurations as needed
+  // session: { strategy: "jwt" }, // Example: Use JWT sessions
+  // callbacks: { ... }, // Example: Define callbacks for customization
+  // pages: { signIn: '/auth/signin' } // Example: Custom sign in page
+});
 
 export { handler as GET, handler as POST };
