@@ -17,9 +17,9 @@ const Footer = () => {
             <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">{t('newsletter.title')}</h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">{t('newsletter.description')}</p>
             <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
-              <input 
-                type="email" 
-                placeholder={t('newsletter.placeholder')} 
+              <input
+                type="email"
+                placeholder={t('newsletter.placeholder')}
                 className={`flex-grow px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 ${direction === 'rtl' ? 'text-right' : 'text-left'}`}
               />
               <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
@@ -29,7 +29,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Main footer content */}
       <div className="container mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8">
@@ -38,9 +38,9 @@ const Footer = () => {
             <Link href="/" className="flex items-center mb-6 group">
               <div className="w-10 h-10 rounded-lg mr-3 shadow-md group-hover:shadow-lg transition-all duration-300">
                 <Image
-                  src="/logo.png" 
-                  alt="Aize Logo" 
-                  width={40} height={40} 
+                  src="/logo.png"
+                  alt="Aize Logo"
+                  width={40} height={40}
                 />
               </div>
               <span className="text-lg font-bold text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
@@ -136,12 +136,10 @@ const Footer = () => {
                   {t('footer.explore')}
                 </Link>
               </li>
-              {/* Added Contribute Link */}
-               <li>
+              <li>
                 <Link href="/contribute" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center">
                   <span className="mr-2 text-blue-600 dark:text-blue-400">›</span>
-                  {/* TODO: Add 'footer.contribute' key to your translation files */}
-                  Contribute
+                  {t('footer.contribute')}
                 </Link>
               </li>
               <li>

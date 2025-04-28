@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import { Geist, Geist_Mono, Vazirmatn } from "next/font/google";
+import "@/app/globals.css";
 
 // Import Header and Footer components
 import Header from "@/components/Header";
@@ -19,8 +19,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const vazirmatn = Vazirmatn({
+  variable: "--font-vazirmatn",
+  subsets: ["arabic", "latin"],
+});
+
 export const metadata: Metadata = {
-  title: "Aize | Prompts - AI Prompting Tool",
+  title: "PromptHub | AI Prompting Tool",
   description: "Discover and share AI-powered prompts for modern world to enhance your productivity and creativity.",
 };
 
@@ -32,9 +37,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
+        className={`${vazirmatn.variable} ${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col font-sans`}
       >
-        <Providers> {/* Wrap with Providers (Client Component) */}
+        <Providers>
           <Header />
           <main className="flex-grow">
             {children}

@@ -18,41 +18,53 @@ const defaultLanguage: Language = 'en';
 const LanguageContext = createContext<LanguageContextType>({
   language: defaultLanguage,
   direction: 'ltr',
-  setLanguage: () => {},
+  setLanguage: () => { },
   t: (key: string) => key,
 });
 
 // Translations
 const translations = {
   en: {
+    // Meta
+    'meta.title': 'PromptHub | AI Prompting Tool',
+    'meta.description': 'Discover and share AI-powered prompts for modern world to enhance your productivity and creativity.',
+
+    // Auth
+    'auth.sign-out': 'Sign Out',
+
+    // Footer Links
+    'footer.privacy': 'Privacy Policy',
+    'footer.terms': 'Terms of Service',
+
     // Header
     'header.home': 'Home',
     'header.explore': 'Explore',
     'header.chat': 'Chat',
     'header.signin': 'Sign In',
-    
+    'header.contribute': 'Contribute',
+
     // Hero section
     'hero.discover': 'Discover & Share',
     'hero.ai-powered': 'AI-Powered Prompts',
     'hero.description': 'PromptHub is an open-source AI prompting tool for modern world to discover, create, and share creative prompts',
     'hero.search': 'Search for tag or username',
     'hero.explore-all': 'Explore All Prompts',
-    
+
     // Popular tags
     'tags.popular': 'Popular Tags',
     'tags.discover': 'Discover prompts by popular categories and topics',
     'tags.view-all': 'View all categories',
-    
+
     // What are prompts
     'prompts.what': 'What Exactly Are Prompts?',
     'prompts.description': 'Prompts are the starting point for your conversations with Large Language Models (LLMs). Think of them as specific instructions, questions, or pieces of context you provide to guide the AI towards generating the text, code, images, or other content you need. A well-crafted prompt is key to unlocking the full potential of platforms like OpenAI\'s ChatGPT, Google\'s Gemini, Anthropic\'s Claude, AI21\'s Jurassic models, and many others.',
-    
+
     // Featured prompts
     'featured.title': 'Featured Prompts',
     'featured.description': 'Discover our collection of high-quality prompts created by the community',
     'featured.view-all': 'View All Prompts',
     'featured.view-details': 'View Details',
-    
+
     // How to use
     'how.title': 'How to Use These Prompts',
     'how.description': 'Simply find a prompt that fits your needs, copy it, and paste it directly into your preferred LLM interface. Experiment and adapt them to achieve the best results!',
@@ -63,7 +75,7 @@ const translations = {
     'how.step2.description': 'Click on a prompt to view details and copy the full text with a single click.',
     'how.step3.title': 'Use with Any AI',
     'how.step3.description': 'Paste the prompt into your favorite AI platform and start generating amazing results.',
-    
+
     // Explore page
     'explore.title': 'Explore Prompts',
     'explore.search-label': 'Search Prompts',
@@ -72,7 +84,7 @@ const translations = {
     'explore.all-tags': 'All Tags',
     'explore.no-prompts': 'No prompts found matching your criteria.',
     'explore.broaden-search': 'Try broadening your search or clearing the filters.',
-    
+
     // Prompt detail page
     'prompt.uncategorized': 'Uncategorized',
     'prompt.added-recently': 'Added recently',
@@ -87,7 +99,7 @@ const translations = {
     'prompt.step-2': 'Paste it into your preferred AI platform',
     'prompt.step-3': 'Customize the prompt as needed for your specific requirements',
     'prompt.similar': 'Similar Prompts',
-    
+
     // Footer
     'footer.services': 'Services',
     'footer.smart-chat': 'Smart Chat Panel',
@@ -103,52 +115,58 @@ const translations = {
     'footer.explore': 'Explore Prompts',
     'footer.signin': 'Sign In',
     'footer.rights': 'All rights reserved.',
-    
+    'footer.contribute': 'Contribute',
+
     // Newsletter section
     'newsletter.title': 'Stay updated with the latest prompts',
     'newsletter.description': 'Join our newsletter to receive new prompts, tips, and AI resources directly to your inbox',
     'newsletter.placeholder': 'Your email address',
     'newsletter.subscribe': 'Subscribe',
-    
+
     // Recent Additions section
     'recent.title': 'Recent Additions',
     'recent.description': 'The latest prompts added to our collection',
     'recent.view-all': 'View all prompts',
-    
+
     // CTA section
     'cta.title': 'Ready to enhance your AI interactions?',
     'cta.description': 'Join our community and discover the power of well-crafted prompts',
     'cta.button': 'Get Started Now',
   },
   fa: {
+    // Meta
+    'meta.title': 'پرامپت‌هاب | ابزار پرامپت هوش مصنوعی',
+    'meta.description': 'کشف و به اشتراک‌گذاری پرامپت‌های هوش مصنوعی برای دنیای مدرن جهت افزایش بهره‌وری و خلاقیت شما.',
+
     // Header
     'header.home': 'خانه',
     'header.explore': 'کاوش',
     'header.chat': 'چت',
     'header.signin': 'ورود',
-    
+    'header.contribute': 'مشارکت',
+
     // Hero section
     'hero.discover': 'کشف و اشتراک‌گذاری',
     'hero.ai-powered': 'پرامپت‌های هوش مصنوعی',
     'hero.description': 'پرامپت‌هاب یک ابزار متن‌باز برای دنیای مدرن است تا پرامپت‌های خلاقانه را کشف، ایجاد و به اشتراک بگذارید',
     'hero.search': 'جستجو برای تگ یا نام کاربری',
     'hero.explore-all': 'کاوش همه پرامپت‌ها',
-    
+
     // Popular tags
     'tags.popular': 'تگ‌های محبوب',
     'tags.discover': 'پرامپت‌ها را بر اساس دسته‌بندی‌ها و موضوعات محبوب کشف کنید',
     'tags.view-all': 'مشاهده همه دسته‌بندی‌ها',
-    
+
     // What are prompts
     'prompts.what': 'پرامپت‌ها دقیقاً چه هستند؟',
     'prompts.description': 'پرامپت‌ها نقطه شروع گفتگوهای شما با مدل‌های زبانی بزرگ (LLM) هستند. آنها را به عنوان دستورالعمل‌ها، سوالات یا بخش‌هایی از متن در نظر بگیرید که برای هدایت هوش مصنوعی به سمت تولید متن، کد، تصاویر یا محتوای دیگر ارائه می‌دهید. یک پرامپت خوب طراحی شده کلید آزاد کردن پتانسیل کامل پلتفرم‌هایی مانند ChatGPT از OpenAI، Gemini از Google، Claude از Anthropic، مدل‌های Jurassic از AI21 و بسیاری دیگر است.',
-    
+
     // Featured prompts
     'featured.title': 'پرامپت‌های برجسته',
     'featured.description': 'مجموعه‌ای از پرامپت‌های با کیفیت بالا که توسط جامعه ایجاد شده‌اند را کشف کنید',
     'featured.view-all': 'مشاهده همه پرامپت‌ها',
     'featured.view-details': 'مشاهده جزئیات',
-    
+
     // How to use
     'how.title': 'نحوه استفاده از این پرامپت‌ها',
     'how.description': 'به سادگی پرامپتی را که مناسب نیازهای شما است پیدا کنید، آن را کپی کرده و مستقیماً در رابط LLM مورد نظر خود قرار دهید. آزمایش کنید و آنها را برای دستیابی به بهترین نتایج تطبیق دهید!',
@@ -159,7 +177,7 @@ const translations = {
     'how.step2.description': 'برای مشاهده جزئیات و کپی کردن متن کامل با یک کلیک، روی یک پرامپت کلیک کنید.',
     'how.step3.title': 'با هر هوش مصنوعی استفاده کنید',
     'how.step3.description': 'پرامپت را در پلتفرم هوش مصنوعی مورد علاقه خود قرار دهید و شروع به تولید نتایج شگفت‌انگیز کنید.',
-    
+
     // Explore page
     'explore.title': 'کاوش پرامپت‌ها',
     'explore.search-label': 'جستجوی پرامپت‌ها',
@@ -168,7 +186,7 @@ const translations = {
     'explore.all-tags': 'همه تگ‌ها',
     'explore.no-prompts': 'هیچ پرامپتی مطابق با معیارهای شما یافت نشد.',
     'explore.broaden-search': 'جستجوی خود را گسترده‌تر کنید یا فیلترها را پاک کنید.',
-    
+
     // Prompt detail page
     'prompt.uncategorized': 'دسته‌بندی نشده',
     'prompt.added-recently': 'اخیراً اضافه شده',
@@ -187,7 +205,7 @@ const translations = {
     'prompt.development': 'توسعه',
     'prompt.code-generation': 'تولید کد',
     'prompt.programming': 'برنامه‌نویسی',
-    
+
     // Footer
     'footer.services': 'خدمات',
     'footer.smart-chat': 'پنل چت هوشمند',
@@ -203,18 +221,19 @@ const translations = {
     'footer.explore': 'کاوش پرامپت‌ها',
     'footer.signin': 'ورود',
     'footer.rights': 'تمامی حقوق محفوظ است.',
-    
+    'footer.contribute': 'مشارکت',
+
     // Newsletter section
     'newsletter.title': 'با آخرین پرامپت‌ها به‌روز بمانید',
     'newsletter.description': 'به خبرنامه ما بپیوندید تا پرامپت‌های جدید، نکات و منابع هوش مصنوعی را مستقیماً در صندوق ورودی خود دریافت کنید',
     'newsletter.placeholder': 'آدرس ایمیل شما',
     'newsletter.subscribe': 'اشتراک',
-    
+
     // Recent Additions section
     'recent.title': 'افزوده‌های اخیر',
     'recent.description': 'جدیدترین پرامپت‌های اضافه شده به مجموعه ما',
     'recent.view-all': 'مشاهده همه پرامپت‌ها',
-    
+
     // CTA section
     'cta.title': 'آماده بهبود تعاملات هوش مصنوعی خود هستید؟',
     'cta.description': 'به جامعه ما بپیوندید و قدرت پرامپت‌های خوب طراحی شده را کشف کنید',
@@ -229,7 +248,7 @@ type LanguageProviderProps = {
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const [language, setLanguageState] = useState<Language>(defaultLanguage);
   const [direction, setDirection] = useState<Direction>('ltr');
-  
+
   // Load language preference from localStorage on component mount
   useEffect(() => {
     const savedLanguage = localStorage.getItem('language') as Language;
@@ -237,7 +256,7 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
       setLanguageState(savedLanguage);
     }
   }, []);
-  
+
   // Update direction when language changes
   useEffect(() => {
     setDirection(language === 'fa' ? 'rtl' : 'ltr');
@@ -245,16 +264,16 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
     document.documentElement.lang = language;
     localStorage.setItem('language', language);
   }, [language]);
-  
+
   // Translation function
   const t = (key: string): string => {
     return translations[language][key as keyof typeof translations[typeof language]] || key;
   };
-  
+
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
   };
-  
+
   return (
     <LanguageContext.Provider value={{ language, direction, setLanguage, t }}>
       {children}

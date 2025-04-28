@@ -7,7 +7,7 @@ import { useState } from 'react'; // Import useState for button interaction (fut
 
 export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }) {
   const { t, direction } = useLanguage();
-  
+
   // Placeholder states for likes and copies (will be replaced by API data)
   const [likes, setLikes] = useState(prompt.likes || 0);
   const [copies, setCopies] = useState(prompt.copies || 0);
@@ -36,11 +36,11 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
           <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-blue-100 dark:bg-blue-900/30 blur-3xl"></div>
           <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-purple-100 dark:bg-purple-900/30 blur-3xl"></div>
         </div>
-        
+
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl md:text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">{prompt.title}</h1>
-            
+            <h1 className="text-3xl md:text-5xl font-bold mb-6 p-a text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">{prompt.title}</h1>
+
             {/* Tags display */}
             {prompt.tags && prompt.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-6">
@@ -51,7 +51,7 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
                 ))}
               </div>
             )}
-            
+
             {/* Category, Author, and metadata */}
             <div className="flex flex-wrap items-center text-sm text-gray-600 dark:text-gray-400 mb-8 gap-4">
               <div className="flex items-center">
@@ -83,7 +83,7 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
           </div>
         </div>
       </section>
-      
+
       {/* Main content section */}
       <section className="py-12">
         <div className="container mx-auto px-6">
@@ -102,7 +102,7 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
                     <span className="text-xs text-gray-500 dark:text-gray-400">{t('prompt.ai-prompt')}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <a 
+                    <a
                       href={`https://chat.aize.dev/?prompt=${encodeURIComponent(prompt.content)}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -114,7 +114,7 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
                       {t('prompt.try-aize')}
                     </a>
                     {/* Copy button - now calls handleCopy */}
-                    <button 
+                    <button
                       className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 text-sm font-medium flex items-center gap-1 transition-colors"
                       onClick={handleCopy}
                     >
@@ -130,33 +130,33 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
                 </pre>
               </div>
             </div>
-            
+
             {/* Interaction Stats (Likes and Copies) */}
             <div className="flex items-center space-x-6 text-gray-600 dark:text-gray-400 mb-12">
               {/* Likes */} {/* Added Likes Interaction Here */}
-              <button 
+              <button
                 className="flex items-center text-sm font-medium hover:text-pink-600 dark:hover:text-pink-400 transition-colors"
                 onClick={handleLike}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
-                <span>{likes} {t('prompt.likes')}</span> {/* Using state variable */} 
+                <span>{likes} {t('prompt.likes')}</span> {/* Using state variable */}
               </button>
-              
+
               {/* Copies */} {/* Added Copies Interaction Here */}
               <div className="flex items-center text-sm font-medium">
-                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                 </svg>
-                 <span>{copies} {t('prompt.copies')}</span> {/* Using state variable */} 
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <span>{copies} {t('prompt.copies')}</span> {/* Using state variable */}
               </div>
             </div>
 
             {/* Details section */}
             <div className="mb-12">
               <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">{t('prompt.details')}</h2>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Use Cases */}
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
@@ -168,7 +168,7 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
                     </div>
                     <h3 className="font-semibold text-lg text-gray-800 dark:text-white">{t('prompt.use-cases')}</h3>
                   </div>
-                  
+
                   {prompt.useCases && prompt.useCases.length > 0 ? (
                     <ul className={`space-y-2 ${direction === 'rtl' ? 'pr-4' : 'pl-4'}`}>
                       {prompt.useCases.map((useCase, index) => (
@@ -182,7 +182,7 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
                     <p className="text-gray-500 dark:text-gray-400">{t('prompt.no-use-cases')}</p>
                   )}
                 </div>
-                
+
                 {/* How to Use */}
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
                   <div className="flex items-center mb-4">
@@ -193,7 +193,7 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
                     </div>
                     <h3 className="font-semibold text-lg text-gray-800 dark:text-white">{t('prompt.how-to-use')}</h3>
                   </div>
-                  
+
                   <ol className="space-y-4">
                     <li className="flex items-start">
                       <span className={`flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium text-sm ${direction === 'rtl' ? 'ml-3' : 'mr-3'}`}>1</span>

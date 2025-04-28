@@ -249,12 +249,12 @@ export default function ContributePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
-          tags: form.tags
+          tags: Array.isArray(form.tags)
             ? form.tags
+            : form.tags
               .split(",")
               .map((tag) => tag.trim())
-              .filter(Boolean)
-            : [],
+              .filter(Boolean),
           author: displayName,
         }),
       });
@@ -309,7 +309,11 @@ export default function ContributePage() {
     const newForm = {
       title: prompt.title || "",
       content: prompt.content || "",
-      tags: typeof prompt.tags === "string" ? prompt.tags : Array.isArray(prompt.tags) ? prompt.tags.join(", ") : "",
+      tags: Array.isArray(prompt.tags)
+        ? prompt.tags.join(", ")
+        : typeof prompt.tags === "string"
+          ? prompt.tags
+          : "",
       category: prompt.category || "",
       model: prompt.model || "",
       example: prompt.example || "",

@@ -35,9 +35,8 @@ const Header = () => {
   };
 
   return (
-    <header className={`sticky top-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm transition-all duration-300 ${
-      isScrolled ? 'shadow-md' : 'border-b border-gray-200 dark:border-gray-800'
-    }`}>
+    <header className={`sticky top-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm transition-all duration-300 ${isScrolled ? 'shadow-md' : 'border-b border-gray-200 dark:border-gray-800'
+      }`}>
       <div className="container mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
           {/* Logo and Brand Name */}
@@ -64,8 +63,7 @@ const Header = () => {
             </Link>
             {/* Added Contribute Link */}
             <Link href="/contribute" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors relative group py-2">
-              {/* TODO: Add 'header.contribute' key to your translation files */}
-              Contribute
+              {t('header.contribute')}
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 dark:bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <Link href="https://chat.aize.dev/" target="_blank" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors relative group py-2">
@@ -78,12 +76,12 @@ const Header = () => {
           <div className="hidden md:flex items-center space-x-4">
             <LanguageSwitcher />
             {status === 'authenticated' ? (
-               <button
-                 onClick={handleSignOut}
-                 className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg transform hover:translate-y-[-2px]"
-               >
-                 Sign Out
-               </button>
+              <button
+                onClick={handleSignOut}
+                className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg transform hover:translate-y-[-2px]"
+              >
+                Sign Out
+              </button>
             ) : (
               <button
                 onClick={openModal} // Call openModal on click
@@ -129,14 +127,13 @@ const Header = () => {
               >
                 {t('header.explore')}
               </Link>
-               {/* Added Contribute Link */}
+              {/* Added Contribute Link */}
               <Link
                 href="/contribute"
                 className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                 {/* TODO: Add 'header.contribute' key to your translation files */}
-                 Contribute
+                {t('header.contribute')}
               </Link>
               <Link
                 href="https://chat.aize.dev/"
@@ -152,21 +149,21 @@ const Header = () => {
               <div className="flex justify-center">
                 <LanguageSwitcher />
               </div>
-               {status === 'authenticated' ? (
+              {status === 'authenticated' ? (
                 <button
                   onClick={handleSignOut}
                   className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-md"
                 >
                   Sign Out
                 </button>
-               ) : (
-                 <button
-                   onClick={() => { openModal(); setIsMobileMenuOpen(false); }} // Open modal and close mobile menu
-                   className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-md"
-                 >
-                   {t('header.signin')}
-                 </button>
-               )}
+              ) : (
+                <button
+                  onClick={() => { openModal(); setIsMobileMenuOpen(false); }} // Open modal and close mobile menu
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-md"
+                >
+                  {t('header.signin')}
+                </button>
+              )}
             </div>
           </div>
         )}
