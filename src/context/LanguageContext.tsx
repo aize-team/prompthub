@@ -49,6 +49,7 @@ const translations = {
     'hero.description': 'PromptHub is an open-source AI prompting tool for modern world to discover, create, and share creative prompts',
     'hero.search': 'Search for tag or username',
     'hero.explore-all': 'Explore All Prompts',
+    'hero.generate-prompt': 'Generate Prompt',
 
     // Popular tags
     'tags.popular': 'Popular Tags',
@@ -128,6 +129,21 @@ const translations = {
     'recent.description': 'The latest prompts added to our collection',
     'recent.view-all': 'View all prompts',
 
+    // Generate Prompt section
+    'generate.title': 'Generate AI Prompts Instantly',
+    'generate.description': 'Describe what you need, and our AI will craft a well-structured prompt for you',
+    'generate.prompt-idea-label': 'Describe your prompt idea',
+    'generate.prompt-idea-placeholder': 'E.g., I need a prompt that helps me write better blog posts about technology...',
+    'generate.button': 'Generate Prompt',
+    'generate.processing': 'Processing...',
+    'generate.error-empty': 'Please enter your prompt idea',
+    'generate.error-processing': 'Failed to process your prompt. Please try again.',
+    'generate.result-title': 'Your Generated Prompt',
+    'generate.result-prompt-title': 'Title',
+    'generate.result-prompt-content': 'Content',
+    'generate.result-prompt-tags': 'Tags',
+    'generate.edit-and-contribute': 'Edit and contribute this prompt',
+
     // CTA section
     'cta.title': 'Ready to enhance your AI interactions?',
     'cta.description': 'Join our community and discover the power of well-crafted prompts',
@@ -151,6 +167,7 @@ const translations = {
     'hero.description': 'پرامپت‌هاب یک ابزار متن‌باز برای دنیای مدرن است تا پرامپت‌های خلاقانه را کشف، ایجاد و به اشتراک بگذارید',
     'hero.search': 'جستجو برای تگ یا نام کاربری',
     'hero.explore-all': 'کاوش همه پرامپت‌ها',
+    'hero.generate-prompt': 'ایجاد پرامپت',
 
     // Popular tags
     'tags.popular': 'تگ‌های محبوب',
@@ -200,6 +217,21 @@ const translations = {
     'prompt.step-1': 'پرامپت را با استفاده از دکمه کپی در بالا کپی کنید',
     'prompt.step-2': 'آن را در پلتفرم هوش مصنوعی مورد نظر خود قرار دهید',
     'prompt.step-3': 'پرامپت را بر اساس نیازهای خاص خود سفارشی کنید',
+
+    // Generate Prompt section
+    'generate.title': 'ایجاد پرامپت‌های هوش مصنوعی به صورت آنی',
+    'generate.description': 'آنچه نیاز دارید را توصیف کنید، و هوش مصنوعی ما یک پرامپت ساختاریافته برای شما ایجاد می‌کند',
+    'generate.prompt-idea-label': 'ایده پرامپت خود را توصیف کنید',
+    'generate.prompt-idea-placeholder': 'مثال: من به پرامپتی نیاز دارم که به من کمک کند مقالات وبلاگ بهتری درباره تکنولوژی بنویسم...',
+    'generate.button': 'ایجاد پرامپت',
+    'generate.processing': 'در حال پردازش...',
+    'generate.error-empty': 'لطفاً ایده پرامپت خود را وارد کنید',
+    'generate.error-processing': 'پردازش پرامپت شما با خطا مواجه شد. لطفاً دوباره تلاش کنید.',
+    'generate.result-title': 'پرامپت ایجاد شده شما',
+    'generate.result-prompt-title': 'عنوان',
+    'generate.result-prompt-content': 'محتوا',
+    'generate.result-prompt-tags': 'تگ‌ها',
+    'generate.edit-and-contribute': 'ویرایش و مشارکت این پرامپت',
     'prompt.similar': 'پرامپت‌های مشابه',
     'prompt.coding': 'کدنویسی',
     'prompt.development': 'توسعه',

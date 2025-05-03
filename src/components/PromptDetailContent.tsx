@@ -131,26 +131,39 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
               </div>
             </div>
 
-            {/* Interaction Stats (Likes and Copies) */}
-            <div className="flex items-center space-x-6 text-gray-600 dark:text-gray-400 mb-12">
-              {/* Likes */} {/* Added Likes Interaction Here */}
-              <button
-                className="flex items-center text-sm font-medium hover:text-pink-600 dark:hover:text-pink-400 transition-colors"
-                onClick={handleLike}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-                <span>{likes} {t('prompt.likes')}</span> {/* Using state variable */}
-              </button>
+            {/* Interaction Stats and Actions */}
+            <div className="flex flex-wrap items-center justify-between gap-6 mb-12">
+              <div className="flex items-center space-x-6 text-gray-600 dark:text-gray-400">
+                {/* Likes */}
+                <button
+                  className="flex items-center text-sm font-medium hover:text-pink-600 dark:hover:text-pink-400 transition-colors"
+                  onClick={handleLike}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                  <span>{likes} {t('prompt.likes')}</span>
+                </button>
 
-              {/* Copies */} {/* Added Copies Interaction Here */}
-              <div className="flex items-center text-sm font-medium">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-                <span>{copies} {t('prompt.copies')}</span> {/* Using state variable */}
+                {/* Copies */}
+                <div className="flex items-center text-sm font-medium">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                  <span>{copies} {t('prompt.copies')}</span>
+                </div>
               </div>
+              
+              {/* Edit and Contribute Button - More visible and clickable */}
+              <a 
+                href={`/contribute?id=${prompt.id}`} 
+                className="flex items-center gap-2 bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-800/50 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-lg transition-all duration-300 font-medium shadow-sm hover:shadow-md transform hover:scale-105"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+                {t('generate.edit-and-contribute')}
+              </a>
             </div>
 
             {/* Details section */}

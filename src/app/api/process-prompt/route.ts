@@ -7,48 +7,157 @@ const openai = new OpenAI({
     baseURL: process.env.OPENAI_BASE_URL,
 });
 
-async function processPromptWithLLM(promptIdea: string) {
+async function analyzeAndExpandInput(promptIdea: string) {
     try {
-        // Call the OpenAI API
         const response = await openai.chat.completions.create({
             model: "GPT-4.1 Nano",
             messages: [
                 {
                     role: "system",
-                    content:
-                        `You are an expert prompt engineer with deep knowledge of AI language models. Your task is to analyze the user's prompt idea and transform it into a highly effective, structured prompt that will produce consistent, high-quality results.
-
-          First, identify the core purpose and desired outcome of the user's request. Then, create a comprehensive prompt with a clear role definition and specific instructions.
-
-          Return a JSON object with the following fields:
-          - title: A concise, descriptive title for the prompt (max 60 chars)
-          - content: A refined, structured version of their prompt that begins with a clear role definition (e.g., "You are an expert mathematician") followed by specific instructions with {variables} for customizable parts
-          - tags: A comma-separated list of 3-7 relevant tags that accurately categorize the prompt
-          - category: One of [General, Writing, Coding, Education, Other]
-          - model: One of [Any, GPT-4, GPT-3.5, Claude, Gemini, Other]
-          - promptType: One of [Question, Instruction, Conversation, Role-playing, Other]
-          - complexityLevel: One of [Beginner, Intermediate, Advanced, Expert]
-          - useCases: An array of use cases from [Content Creation, Data Analysis, Problem Solving, Creative Writing, Coding, Learning, Business, Personal]
-          - tips: Specific, actionable advice for using the prompt effectively and getting the best results
-          - exampleOutput: A brief example of expected output to demonstrate the prompt's effectiveness
-          - expectedResponse: Format of expected response (e.g., "Bulleted list", "Step-by-step guide", "Detailed analysis")
-          - contextLength: One of [Very Short, Short, Medium, Long, Very Long]
-          
-          IMPORTANT GUIDELINES:
-          1. ALWAYS begin the content with a clear role definition (e.g., "You are an expert [profession/role]")
-          2. Structure the prompt with clear sections (context, task, constraints, format)
-          3. Include specific instructions on how the AI should respond
-          4. Use {variables} for parts the user will customize
-          5. Keep the language clear and concise
-          6. The prompt should be in English unless the user explicitly requests another language
-          7. Ensure all fields match the expected values and format
-          
-          Don't include any explanation outside the JSON.
-          `
+                    content: `You are a highly intelligent assistant. 
+                    Analyze the provided prompt and generate concise answers for the following key aspects:
+                    
+                    - **Main goal of the prompt:** Identify the core subject or request within the provided prompt.
+                    - **Persona:** Recommend the most relevant persona for the AI model to adopt (e.g., expert, teacher, conversational, etc.)
+                    - **Optimal output length:** Suggest an optimal output length (short, brief, medium, long) based on the task, and give an approximate number of words if it is suitable for the case.
+                    - **Most convenient output format:** Recommend the optimal format for the result (e.g., list, paragraph, code snippet, table, JSON, etc.).
+                    - **Specific requirements:** Highlight any special conditions, rules, or expectations stated or implied within the prompt.
+                    - **Suggested improvements:** Offer recommendations on how to modify or enhance the prompt for more precise or efficient output generation.
+                    - **One-shot prompting:** Create one related examples to guide the output generation.
+                    
+                    Then use them to reformulate and expand the provided prompt.
+                    Return the expanded prompt as output in text format. Refrain from explaining the generation process.`
                 },
                 {
                     role: "user",
                     content: promptIdea
+                }
+            ],
+            temperature: 0.5
+        });
+
+        return response.choices[0].message.content || "";
+    } catch (error) {
+        console.error("Error in analyzeAndExpandInput:", error);
+        return promptIdea;
+    }
+}
+
+async function decomposeAndAddReasoning(expandedPrompt: string) {
+    try {
+        const response = await openai.chat.completions.create({
+            model: "GPT-4.1 Nano",
+            messages: [
+                {
+                    role: "system",
+                    content: `You are a highly capable AI assistant tasked with improving complex task execution. 
+                    Analyze the provided prompt, and use it to generate the following output:
+                    
+                    - **Subtasks decomposition:** Break down the task described in the prompt into manageable and specific subtasks that the AI model needs to address.
+                    - **Chain-of-thought reasoning:** For subtasks that involve critical thinking or complex steps, add reasoning using a step-by-step approach to improve decision-making and output quality.
+                    - **Success criteria:** Define what constitutes a successful completion for each subtask, ensuring clear guidance for expected results.
+                    
+                    Return the following structured output for each subtask:
+                    
+                    1. **Subtask description**: Describe a specific subtask.
+                    2. **Reasoning**: Provide reasoning or explanation for why this subtask is essential or how it should be approached.
+                    3. **Success criteria**: Define what successful completion looks like for this subtask.`
+                },
+                {
+                    role: "user",
+                    content: expandedPrompt
+                }
+            ],
+            temperature: 0.5
+        });
+
+        return response.choices[0].message.content || "";
+    } catch (error) {
+        console.error("Error in decomposeAndAddReasoning:", error);
+        return "";
+    }
+}
+
+async function suggestEnhancements(promptIdea: string) {
+    try {
+        const response = await openai.chat.completions.create({
+            model: "GPT-4.1 Nano",
+            messages: [
+                {
+                    role: "system",
+                    content: `You are a highly intelligent assistant specialized in reference suggestion and tool integration.
+                    Analyze the provided input prompt to recommend enhancements:
+                    
+                    - **Reference necessity:** Determine if additional reference materials would benefit the task execution (e.g., websites, documentations, books, articles, etc.)
+                    - **Expected impact:** Estimate the potential improvement in output quality
+                    
+                    If enhancements are warranted, provide structured recommendations in this format:
+                    
+                    ##REFERENCE SUGGESTIONS##
+                    (Only if applicable, maximum 3)
+                    - Reference name/type
+                    - Purpose: How it enhances the output
+                    - Integration: How to incorporate it
+                    
+                    If no enhancements would significantly improve the output, return an empty string ""`
+                },
+                {
+                    role: "user",
+                    content: promptIdea
+                }
+            ],
+            temperature: 0.5
+        });
+
+        return response.choices[0].message.content || "";
+    } catch (error) {
+        console.error("Error in suggestEnhancements:", error);
+        return "";
+    }
+}
+
+async function generateStructuredPrompt(components: any) {
+    const { expandedPrompt, decompositionAndReasoning, suggestedEnhancements, promptIdea } = components;
+    try {
+        const response = await openai.chat.completions.create({
+            model: "GPT-4.1 Nano",
+            messages: [
+                {
+                    role: "system",
+                    content: `You are an expert prompt engineer with deep knowledge of AI language models. Your task is to analyze the provided components and transform them into a highly effective, structured prompt that will produce consistent, high-quality results.
+
+                    Return a JSON object with the following fields:
+                    - title: A concise, descriptive title for the prompt (max 60 chars)
+                    - content: A refined, structured version of the prompt that begins with a clear role definition (e.g., "You are an expert mathematician") followed by specific instructions with {variables} for customizable parts
+                    - tags: A comma-separated list of 3-7 relevant tags that accurately categorize the prompt
+                    - category: One of [General, Writing, Coding, Education, Other]
+                    - model: One of [Any, GPT-4, GPT-3.5, Claude, Gemini, Other]
+                    - promptType: One of [Question, Instruction, Conversation, Role-playing, Other]
+                    - complexityLevel: One of [Beginner, Intermediate, Advanced, Expert]
+                    - useCases: An array of use cases from [Content Creation, Data Analysis, Problem Solving, Creative Writing, Coding, Learning, Business, Personal]
+                    - tips: Specific, actionable advice for using the prompt effectively and getting the best results
+                    - example: A brief example input to demonstrate how to use the prompt
+                    - exampleOutput: A brief example of expected output to demonstrate the prompt's effectiveness
+                    - expectedResponse: Format of expected response (e.g., "Bulleted list", "Step-by-step guide", "Detailed analysis")
+                    - contextLength: One of [Very Short, Short, Medium, Long, Very Long]
+                    
+                    IMPORTANT GUIDELINES:
+                    1. ALWAYS begin the content with a clear role definition (e.g., "You are an expert [profession/role]")
+                    2. Structure the prompt with clear sections (context, task, constraints, format)
+                    3. Include specific instructions on how the AI should respond
+                    4. Use {variables} for parts the user will customize
+                    5. Keep the language clear and concise
+          6. The prompt should be in English unless the user explicitly requests another language
+          7. Ensure all fields match the expected values and format
+                    
+                    Don't include any explanation outside the JSON.`
+                },
+                {
+                    role: "user",
+                    content: `Original Prompt Idea: ${promptIdea}\n\n` +
+                        `Expanded Prompt: ${expandedPrompt}\n\n` +
+                        `Decomposition and Reasoning: ${decompositionAndReasoning}\n\n` +
+                        `Suggested Enhancements: ${suggestedEnhancements}`
                 }
             ],
             temperature: 0.7,
@@ -70,7 +179,33 @@ async function processPromptWithLLM(promptIdea: string) {
 
         return result;
     } catch (error) {
-        console.error("Error calling OpenAI API:", error);
+        console.error("Error in generateStructuredPrompt:", error);
+        return simulatePromptAnalysis(promptIdea);
+    }
+}
+
+async function processPromptWithLLM(promptIdea: string) {
+    try {
+        // Step 1: Analyze and expand the input prompt
+        const expandedPrompt = await analyzeAndExpandInput(promptIdea);
+
+        // Step 2: Decompose the expanded prompt and add reasoning
+        const decompositionAndReasoning = await decomposeAndAddReasoning(expandedPrompt);
+
+        // Step 3: Suggest enhancements for the prompt
+        const suggestedEnhancements = await suggestEnhancements(promptIdea);
+
+        // Step 4: Generate the final structured prompt
+        const components = {
+            expandedPrompt,
+            decompositionAndReasoning,
+            suggestedEnhancements,
+            promptIdea
+        };
+
+        return await generateStructuredPrompt(components);
+    } catch (error) {
+        console.error("Error in advanced prompt generation pipeline:", error);
         // Fall back to simulated analysis if API fails
         return simulatePromptAnalysis(promptIdea);
     }
