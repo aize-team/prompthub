@@ -26,7 +26,45 @@ async function analyzeAndExpandInput(promptIdea: string) {
                     - **One-shot prompting:** Create one related examples to guide the output generation.
                     
                     Then use them to reformulate and expand the provided prompt.
-                    Return the expanded prompt as output in text format. Refrain from explaining the generation process.`
+                    Return the expanded prompt as output in text format. Refrain from explaining the generation process.
+                    
+                    Example 1:
+                    Prompt: "Explain quantum entanglement to a 10-year-old."
+
+                    *thought_process*:
+                    - **Main goal of the prompt:** Simplify complex quantum physics concept for children.
+                    - **Persona:** Patient, friendly teacher
+                    - **Optimal output length:** Brief (100-150 words)
+                    - **Most convenient output format:** Narrative with analogy
+                    - **Specific requirements:** Age-appropriate explanation (10-year-old).
+                    - **Suggested improvements:** 
+                        - Request specific analogies
+                        - Include interactive elements
+                        - Add follow-up questions
+                        - Suggest visual aids
+                    - **One-shot prompting:**
+                    Output example:
+                        "Imagine you have two special pairs of socks. When you put one sock in your room and the other sock in the kitchen, 
+                        something magical happens! Whatever happens to one sock instantly affects the other sock. 
+                        If you turn one sock inside out, the other sock automatically turns inside out too, no matter how far apart they are!" 
+
+                    *output*:
+                    As a friendly science teacher, please explain quantum entanglement to a 10-year-old student using these guidelines:
+
+                    Start with a relatable analogy using everyday objects
+                    Use simple, clear language avoiding technical terms
+                    Include 2-3 interactive examples that demonstrate the concept
+                    Add fun facts that will spark curiosity
+                    End with simple questions to check understanding
+                    Keep the explanation brief (100-150 words)
+
+                    Structure your explanation as:
+
+                    Opening analogy
+                    Main explanation with examples
+                    Interactive "What if?" scenarios
+                    Fun facts about quantum entanglement
+                    Check-for-understanding questions`
                 },
                 {
                     role: "user",
@@ -61,7 +99,24 @@ async function decomposeAndAddReasoning(expandedPrompt: string) {
                     
                     1. **Subtask description**: Describe a specific subtask.
                     2. **Reasoning**: Provide reasoning or explanation for why this subtask is essential or how it should be approached.
-                    3. **Success criteria**: Define what successful completion looks like for this subtask.`
+                    3. **Success criteria**: Define what successful completion looks like for this subtask.
+                    
+                    Example 1:
+                    Prompt: "Explain how machine learning models are evaluated using cross-validation."
+
+                    ##THOUGHT PROCESS##
+                    *Subtask 1*:
+                    - **Description**: Define cross-validation and its purpose.
+                    - **Reasoning**: Clarifying the concept ensures the reader understands the basic mechanism behind model evaluation.
+                    - **Success criteria**: The explanation should include a clear definition of cross-validation and its role in assessing model performance.
+                    *Subtask 2*:
+                    - **Description**: Describe how cross-validation splits data into training and validation sets.
+                    - **Reasoning**: Explaining the split is crucial to understanding how models are validated and tested for generalization.
+                    - **Success criteria**: A proper explanation of k-fold cross-validation with an illustration of how data is split.
+                    *Subtask 3*:
+                    - **Description**: Discuss how cross-validation results are averaged to provide a final evaluation metric.
+                    - **Reasoning**: Averaging results helps mitigate the variance in performance due to different training/validation splits.
+                    - **Success criteria**: The output should clearly explain how the final model evaluation is derived from multiple iterations of cross-validation.`
                 },
                 {
                     role: "user",

@@ -59,15 +59,13 @@ const Home = () => {
         // Load recent prompts (random 4)
         const recent = await getPrompts(4, 0, 'recent');
         setRecentPrompts(recent);
-
-        // Tags section removed as requested
       } catch (err) {
         console.error('Error loading section data:', err);
       }
     };
 
     loadSectionData();
-  }, [getPrompts, getTags]);
+  }, [getPrompts]);
 
   // Handle search submission
   const handleSearch = (e: React.FormEvent) => {
@@ -235,199 +233,250 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Popular tags section removed as requested */}
-
-      {/* Generate Prompt Section */}
-      <section id="generate-prompt" className="py-16 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
+      <section id="generate-prompt" className="py-16 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">{t('generate.title')}</h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{t('generate.description')}</p>
-          </div>
-          
-          <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700">
-            {/* Header with decorative elements */}
-            <div className="h-2 bg-gradient-to-r from-blue-500 to-purple-600"></div>
-            <div className="p-6 md:p-8">
-              <div className="flex items-center mb-6">
-                <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 mr-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 inline-block">
+                {t('generate.title')}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                {t('generate.description')}
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700 mb-10 transition-all duration-300 hover:shadow-2xl">
+              {/* Header with decorative elements */}
+              <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-500/20 dark:to-purple-500/20 px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center">
+                <div className="flex space-x-2 mr-4">
+                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-400"></div>
                 </div>
-                <h3 className="font-semibold text-lg text-gray-800 dark:text-white">{t('generate.prompt-idea-label')}</h3>
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">AI Prompt Generator</span>
               </div>
               
-              <div className="mb-6">
-                <textarea
-                  id="promptIdea"
-                  rows={5}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 shadow-sm hover:shadow-md"
-                  placeholder={t('generate.prompt-idea-placeholder')}
-                  onChange={(e) => setPromptIdea(e.target.value)}
-                  value={promptIdea}
-                />
-              </div>
-              
-              <div className="flex justify-center">
-                <button
-                  onClick={processPromptIdea}
-                  disabled={processing || !promptIdea.trim()}
-                  className={`px-6 py-3 rounded-lg font-medium text-white transition-all duration-300 flex items-center gap-2 transform hover:scale-105 ${processing || !promptIdea.trim() ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl'}`}
-                >
-                  {processing ? (
-                    <>
-                      <span className="inline-block animate-spin h-5 w-5 border-t-2 border-b-2 border-white rounded-full"></span>
-                      <span>{t('generate.processing')}</span>
-                    </>
-                  ) : (
-                    <>
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <div className="p-6 md:p-8">
+                <div className="mb-6">
+                  <label htmlFor="promptIdea" className="block text-gray-700 dark:text-gray-300 mb-2 font-medium flex justify-between items-center">
+                    <span className="flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                       </svg>
-                      <span>{t('generate.button')}</span>
-                    </>
-                  )}
-                </button>
-              </div>
-              
-              {error && (
-                <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-sm flex items-start">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span>{error}</span>
-                </div>
-              )}
-              
-              {form.title && (
-                <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
-                  <h3 className="text-xl font-semibold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">{t('generate.result-title')}</h3>
-                  
-                  <div className="bg-gray-50 dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-md">
-                    {/* Result header */}
-                    <div className="bg-white dark:bg-gray-800 px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 rounded-full bg-red-400 mr-2"></div>
-                        <div className="w-3 h-3 rounded-full bg-yellow-400 mr-2"></div>
-                        <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                      </div>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">{t('prompt.ai-prompt')}</span>
-                    </div>
-                    
-                    {/* Result content */}
-                    <div className="p-5">
-                      <div className="mb-4">
-                        <span className="font-medium text-gray-700 dark:text-gray-300">{t('generate.result-prompt-title')}:</span>
-                        <h4 className="text-lg font-semibold mt-1 text-gray-900 dark:text-white">{form.title}</h4>
-                      </div>
-                      
-                      <div className="mb-4">
-                        <span className="font-medium text-gray-700 dark:text-gray-300">{t('generate.result-prompt-content')}:</span>
-                        <div className="mt-2 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg whitespace-pre-wrap text-gray-700 dark:text-gray-300 shadow-inner">
-                          {form.content}
-                        </div>
-                      </div>
-                      
-                      <div className="mb-4">
-                        <span className="font-medium text-gray-700 dark:text-gray-300">{t('generate.result-prompt-tags')}:</span>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {form.tags.split(',').map((tag: string, index: number) => (
-                            <span key={index} className="text-xs px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800/50">
-                              #{tag.trim()}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      {form.tips && (
-                        <div className="mb-4">
-                          <span className="font-medium text-gray-700 dark:text-gray-300">{t('prompt.tips')}:</span>
-                          <div className="mt-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-100 dark:border-yellow-800/30 rounded-lg text-yellow-800 dark:text-yellow-200 text-sm">
-                            {form.tips}
-                          </div>
-                        </div>
+                      {t('generate.enter-idea')}
+                    </span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 font-normal">
+                      {promptIdea.length > 0 && (
+                        <span className={`${promptIdea.length > 900 ? 'text-amber-500' : 'text-gray-500'}`}>
+                          {promptIdea.length}/1000 characters
+                        </span>
                       )}
-                      
-                      <div className="mt-6 flex flex-wrap gap-4 justify-between items-center">
-                        <div>
-                          <span className="text-xs text-gray-500 dark:text-gray-400 block mb-1">{t('prompt.complexity')}:</span>
-                          <span className="inline-block px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-full">
-                            {form.complexityLevel}
-                          </span>
-                        </div>
-                        
-                        <Link href="/contribute" passHref>
-                          <button className="flex items-center gap-2 bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-800/50 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-lg transition-colors duration-300 font-medium text-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                            </svg>
-                            {t('generate.edit-and-contribute')}
-                          </button>
-                        </Link>
-                      </div>
-                    </div>
+                    </span>
+                  </label>
+                  <div className="relative">
+                    <textarea
+                      id="promptIdea"
+                      rows={5}
+                      value={promptIdea}
+                      onChange={(e) => setPromptIdea(e.target.value)}
+                      placeholder={t('generate.idea-placeholder')}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 shadow-inner"
+                      maxLength={1000}
+                    />
+                  </div>
+                  <div className="mt-3 flex items-start gap-2 text-sm text-gray-500 dark:text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p>
+                      {t('generate.idea-tip')}
+                    </p>
                   </div>
                 </div>
-              )}
+
+                {error && (
+                  <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg flex items-start gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{error}</span>
+                  </div>
+                )}
+
+                <div className="flex justify-center mt-8">
+                  <button
+                    onClick={processPromptIdea}
+                    disabled={processing || promptIdea.trim().length === 0}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 px-8 rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2 min-w-[200px] justify-center"
+                  >
+                    {processing ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                        <span>{t('generate.processing')}</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <span>{t('generate.generate-button')}</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Prompts Section with modern card design */}
-      <section className="py-20">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">{t('featured.title')}</h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{t('featured.description')}</p>
-          </div>
+      {(error || form.title) && (
+        <>
+          <section className="py-8 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+            <div className="container mx-auto px-6">
+              <div className="max-w-4xl mx-auto">
+                {error && (
+                  <div className="mb-8 p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-sm flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{error}</span>
+                  </div>
+                )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredPrompts.map((prompt: PromptDetail) => (
-              <div key={prompt.id} className="group">
-                <Link href={`/prompt/${prompt.id}`}>
-                  <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col border border-gray-100 dark:border-gray-700 group-hover:border-blue-200 dark:group-hover:border-blue-800/50 transform group-hover:-translate-y-2">
-                    <div className="h-2 bg-gradient-to-r from-blue-500 to-purple-600"></div>
-                    <div className="p-6 flex-grow">
-                      <div className="flex items-center mb-4">
-                        <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-semibold mr-3">
-                          {prompt.title.charAt(0).toUpperCase()}
+                {form.title && (
+                  <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                    <h3 className="text-xl font-semibold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">{t('generate.result-title')}</h3>
+
+                    <div className="bg-gray-50 dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-md">
+                      {/* Result header */}
+                      <div className="bg-white dark:bg-gray-800 px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                        <div className="flex items-center">
+                          <div className="w-3 h-3 rounded-full bg-red-400 mr-2"></div>
+                          <div className="w-3 h-3 rounded-full bg-yellow-400 mr-2"></div>
+                          <div className="w-3 h-3 rounded-full bg-green-400"></div>
                         </div>
-                        <h3 className="font-semibold text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 flex-1 truncate">
-                          {prompt.title}
-                        </h3>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">{t('prompt.ai-prompt')}</span>
                       </div>
-                      <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">{prompt.content}</p>
-                      <div className="flex flex-wrap gap-2 mt-auto">
-                        {prompt.tags.slice(0, 3).map((tag: string) => (
-                          <span key={tag} className="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-                            #{tag}
-                          </span>
-                        ))}
+
+                      {/* Result content */}
+                      <div className="p-5">
+                        <div className="mb-4">
+                          <span className="font-medium text-gray-700 dark:text-gray-300">{t('generate.result-prompt-title')}:</span>
+                          <h4 className="text-lg font-semibold mt-1 text-gray-900 dark:text-white">{form.title}</h4>
+                        </div>
+
+                        <div className="mb-4">
+                          <span className="font-medium text-gray-700 dark:text-gray-300">{t('generate.result-prompt-content')}:</span>
+                          <div className="mt-2 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg whitespace-pre-wrap text-gray-700 dark:text-gray-300 shadow-inner">
+                            {form.content}
+                          </div>
+                        </div>
+
+                        <div className="mb-4">
+                          <span className="font-medium text-gray-700 dark:text-gray-300">{t('generate.result-prompt-tags')}:</span>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {form.tags.split(',').map((tag: string, index: number) => (
+                              <span key={index} className="text-xs px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800/50">
+                                #{tag.trim()}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        {form.tips && (
+                          <div className="mb-4">
+                            <span className="font-medium text-gray-700 dark:text-gray-300">{t('prompt.tips')}:</span>
+                            <div className="mt-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-100 dark:border-yellow-800/30 rounded-lg text-yellow-800 dark:text-yellow-200 text-sm">
+                              {form.tips}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="mt-6 flex flex-wrap gap-4 justify-between items-center">
+                          <div>
+                            <span className="text-xs text-gray-500 dark:text-gray-400 block mb-1">{t('prompt.complexity')}:</span>
+                            <span className="inline-block px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-full">
+                              {form.complexityLevel}
+                            </span>
+                          </div>
+
+                          <button 
+                            onClick={() => {
+                              // Save form data to localStorage before navigating
+                              localStorage.setItem("cachedPromptForm", JSON.stringify(form));
+                              localStorage.setItem("cachedPromptStep", "2"); // Go directly to step 2
+                              // Navigate to contribute page
+                              router.push('/contribute');
+                            }}
+                            className="flex items-center gap-2 bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-800/50 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-lg transition-colors duration-300 font-medium text-sm"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                            {t('generate.edit-and-contribute')}
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                    <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/80 flex justify-between items-center">
-                      <span className="text-xs text-gray-500 dark:text-gray-400">AI Prompt</span>
-                      <span className="text-blue-600 dark:text-blue-400 text-sm font-medium group-hover:underline">{t('featured.view-details')} →</span>
                     </div>
                   </div>
+                )}
+              </div>
+            </div>
+          </section>
+          <section className="py-20">
+            <div className="container mx-auto px-6">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold mb-4">{t('featured.title')}</h2>
+                <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{t('featured.description')}</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {featuredPrompts.map((prompt: PromptDetail) => (
+                  <div key={prompt.id} className="group">
+                    <Link href={`/prompt/${prompt.id}`}>
+                      <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col border border-gray-100 dark:border-gray-700 group-hover:border-blue-200 dark:group-hover:border-blue-800/50 transform group-hover:-translate-y-2">
+                        <div className="h-2 bg-gradient-to-r from-blue-500 to-purple-600"></div>
+                        <div className="p-6 flex-grow">
+                          <div className="flex items-center mb-4">
+                            <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-semibold mr-3">
+                              {prompt.title.charAt(0).toUpperCase()}
+                            </div>
+                            <h3 className="font-semibold text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 flex-1 truncate">
+                              {prompt.title}
+                            </h3>
+                          </div>
+                          <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">{prompt.content}</p>
+                          <div className="flex flex-wrap gap-2 mt-auto">
+                            {prompt.tags.slice(0, 3).map((tag: string) => (
+                              <span key={tag} className="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                                #{tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/80 flex justify-between items-center">
+                          <span className="text-xs text-gray-500 dark:text-gray-400">AI Prompt</span>
+                          <span className="text-blue-600 dark:text-blue-400 text-sm font-medium group-hover:underline">{t('featured.view-details')} →</span>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+
+              <div className="text-center mt-12">
+                <Link href="/explore" passHref>
+                  <button className="bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 font-medium py-3 px-8 rounded-lg border border-blue-200 dark:border-blue-800/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 shadow-sm hover:shadow-md">
+                    {t('featured.view-all')} <span className="ml-1">→</span>
+                  </button>
                 </Link>
               </div>
-            ))}
-          </div>
+            </div>
+          </section>
+        </>
+      )}
 
-          <div className="text-center mt-12">
-            <Link href="/explore" passHref>
-              <button className="bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 font-medium py-3 px-8 rounded-lg border border-blue-200 dark:border-blue-800/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 shadow-sm hover:shadow-md">
-                {t('featured.view-all')} <span className="ml-1">→</span>
-              </button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* What are Prompts Section with modern design */}
       <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-blue-900/20">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">

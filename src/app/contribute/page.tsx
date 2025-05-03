@@ -6,6 +6,59 @@ import Link from "next/link";
 import clsx from "clsx";
 import PromptHistorySidebar from "@/components/PromptHistorySidebar";
 
+// Accordion component for form sections
+interface AccordionProps {
+  title: string;
+  icon: React.ReactNode;
+  color: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+  optionalBadge?: React.ReactNode;
+}
+
+const Accordion: React.FC<AccordionProps> = ({ title, icon, color, isOpen, onToggle, children, optionalBadge = null }) => {
+  const baseColor = color.split('-')[1];
+  
+  return (
+    <div className={`bg-gradient-to-br ${color} p-6 sm:p-8 rounded-xl border border-${baseColor}-100 dark:border-${baseColor}-900/30 transition-all duration-300`}>
+      <div 
+        onClick={onToggle}
+        className="flex items-center justify-between mb-4 cursor-pointer"
+      >
+        <h2 className={`text-xl font-semibold text-${baseColor}-800 dark:text-${baseColor}-300 flex items-center gap-2`}>
+          {icon}
+          {title}
+        </h2>
+        <div className="flex items-center gap-2">
+          {optionalBadge}
+          <button 
+            type="button"
+            className={`p-1 rounded-full hover:bg-${baseColor}-100 dark:hover:bg-${baseColor}-900/40 transition-colors`}
+          >
+            <svg 
+              className={`h-5 w-5 text-${baseColor}-600 dark:text-${baseColor}-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'}`} 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+        {isOpen && (
+          <div className="pt-2">
+            {children}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const availableCategories = [
   "General",
   "Writing",
@@ -76,6 +129,22 @@ export default function ContributePage() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [originalPrompt, setOriginalPrompt] = useState<any>(null);
+  
+  // Accordion state
+  type AccordionSections = 'basicInfo' | 'useCasesAndModels' | 'examplesAndTips';
+  
+  const [accordionState, setAccordionState] = useState({
+    basicInfo: true,
+    useCasesAndModels: false,
+    examplesAndTips: false
+  });
+  
+  const toggleAccordion = (section: AccordionSections) => {
+    setAccordionState(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
   const [form, setForm] = useState({
     id: "",
@@ -144,6 +213,10 @@ export default function ContributePage() {
           
           // Skip to step 2
           setStep(2);
+          
+          // Display a message indicating edit mode
+          setSuccessMessage("You are editing an existing prompt. Changes will be submitted for review.");
+          setTimeout(() => setSuccessMessage(""), 5000);
         } catch (error) {
           console.error("Error fetching prompt data:", error);
           setError("Failed to load prompt data. Please try again.");
@@ -242,7 +315,10 @@ export default function ContributePage() {
 
   const fillPromptTemplate = () => {
     const template = randomPromptTemplate();
-    setForm(template);
+    setForm({
+      ...template,
+      id: form.id // Maintain the id to fix lint error
+    });
     setCharCount({
       title: template.title.length,
       content: template.content.length,
@@ -276,6 +352,7 @@ export default function ContributePage() {
       // Update the form with the processed data
       setForm(prev => ({
         ...prev,
+        id: prev.id, // Maintain the id to fix lint error
         title: data.title || "",
         content: data.content || "",
         tags: data.tags || "",
@@ -284,7 +361,11 @@ export default function ContributePage() {
         promptType: data.promptType || "",
         complexityLevel: data.complexityLevel || "",
         useCases: data.useCases || [],
-        tips: data.tips || ""
+        tips: data.tips || "",
+        example: prev.example,
+        exampleOutput: prev.exampleOutput,
+        expectedResponse: prev.expectedResponse,
+        contextLength: prev.contextLength
       }));
 
       setCharCount({
@@ -412,6 +493,7 @@ export default function ContributePage() {
 
   const handleSelectPrompt = (prompt: any) => {
     const newForm = {
+      id: prompt.id, // Maintain the id to fix lint error
       title: prompt.title || "",
       content: prompt.content || "",
       tags: Array.isArray(prompt.tags)
@@ -471,14 +553,14 @@ export default function ContributePage() {
               className="flex items-center justify-center gap-3 w-full py-3 px-4 bg-gray-900 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors duration-200"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
               </svg>
-              Continue with GitHub
+              <span>Continue with GitHub</span>
             </Link>
             
             <Link
               href="/api/auth/signin/google"
-              className="flex items-center justify-center gap-3 w-full py-3 px-4 bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-600 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+              className="flex items-center justify-center gap-3 w-full py-3 px-4 bg-white border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -486,7 +568,7 @@ export default function ContributePage() {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
               </svg>
-              Continue with Google
+              <span>Continue with Google</span>
             </Link>
             
             <button
@@ -627,6 +709,17 @@ export default function ContributePage() {
           </div>
 
           {session && (
+            <Accordion 
+              title="Prompt History" 
+              icon={
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              } 
+              color="from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-700/50" 
+              isOpen={showSidebar} 
+              onToggle={toggleSidebar}
+            >
             <div className="mt-6 text-center">
               <button
                 onClick={toggleSidebar}
@@ -644,6 +737,7 @@ export default function ContributePage() {
                 </div>
               )}
             </div>
+            </Accordion>
           )}
         </div>
       </div>
@@ -811,6 +905,27 @@ export default function ContributePage() {
             </div>
 
             {/* Basic Information Section */}
+            <Accordion 
+              title="Basic Information" 
+              icon={
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              }
+              color="from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20"
+              isOpen={accordionState.basicInfo}
+              onToggle={() => toggleAccordion('basicInfo')}
+            >
             <div className="space-y-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <svg
@@ -964,10 +1079,11 @@ export default function ContributePage() {
                 </div>
               </div>
             </div>
-
+            </Accordion>
             {/* Use Cases & Models Section */}
-            <div className="bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 p-6 sm:p-8 rounded-xl border border-green-100 dark:border-green-900/30">
-              <h2 className="text-xl font-semibold text-green-800 dark:text-green-300 flex items-center gap-2 mb-4">
+            <Accordion
+              title="Use Cases & Models"
+              icon={
                 <svg
                   className="h-5 w-5"
                   fill="none"
@@ -981,8 +1097,11 @@ export default function ContributePage() {
                     d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
                   />
                 </svg>
-                Use Cases & Models
-              </h2>
+              }
+              color="from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20"
+              isOpen={accordionState.useCasesAndModels}
+              onToggle={() => toggleAccordion('useCasesAndModels')}
+            >
               <p className="text-sm text-green-700 dark:text-green-400 mb-6">
                 Where this prompt works best
               </p>
@@ -1059,11 +1178,12 @@ export default function ContributePage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </Accordion>
 
             {/* Examples & Tips Section */}
-            <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 p-6 sm:p-8 rounded-xl border border-amber-100 dark:border-amber-900/30">
-              <h2 className="text-xl font-semibold text-amber-800 dark:text-amber-300 flex items-center gap-2 mb-4">
+            <Accordion
+              title="Examples & Tips"
+              icon={
                 <svg
                   className="h-5 w-5"
                   fill="none"
@@ -1077,122 +1197,172 @@ export default function ContributePage() {
                     d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
                   />
                 </svg>
-                Examples & Tips
-              </h2>
+              }
+              color="from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20"
+              isOpen={accordionState.examplesAndTips}
+              onToggle={() => toggleAccordion('examplesAndTips')}
+              optionalBadge={
+                <div className="text-xs px-3 py-1 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 rounded-full">
+                  Optional but helpful
+                </div>
+              }
+            >
               <p className="text-sm text-amber-700 dark:text-amber-400 mb-6">
-                Help others understand how to use your prompt
+                Help others understand how to use your prompt effectively
               </p>
 
               <div className="space-y-6">
-                <div>
-                  <label className="block mb-2 font-medium text-gray-700 dark:text-gray-300 flex justify-between">
-                    <span>
-                      Example Input{" "}
-                      <span className="text-gray-400 font-normal">(optional)</span>
+                <div className="bg-white dark:bg-gray-800 rounded-lg border border-amber-100 dark:border-amber-800/30 overflow-hidden">
+                  <div className="px-4 py-3 bg-amber-50 dark:bg-amber-900/30 border-b border-amber-100 dark:border-amber-800/30 flex justify-between items-center">
+                    <span className="font-medium text-amber-800 dark:text-amber-300 flex items-center gap-2">
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                      Example Input
                     </span>
-                    <span className="text-xs text-gray-500 font-normal">
-                      Show how to use the prompt
+                    <span className="text-xs text-amber-600 dark:text-amber-400 font-normal">
+                      How users would use your prompt
                     </span>
-                  </label>
-                  <textarea
-                    name="example"
-                    value={form.example}
-                    onChange={handleChange}
-                    rows={3}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors duration-200 font-mono text-sm"
-                    placeholder='Example: "Generate 5 blog post ideas about minimalism"'
-                  />
+                  </div>
+                  <div className="p-4">
+                    <textarea
+                      name="example"
+                      value={form.example}
+                      onChange={handleChange}
+                      rows={3}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors duration-200 font-mono text-sm"
+                      placeholder='Example: "Generate 5 blog post ideas about minimalism"'
+                    />
+                    <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 italic">
+                      Show a realistic example of how someone would use your prompt
+                    </p>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block mb-2 font-medium text-gray-700 dark:text-gray-300 flex justify-between">
-                    <span>
-                      Example Output{" "}
-                      <span className="text-gray-400 font-normal">(optional)</span>
+                <div className="bg-white dark:bg-gray-800 rounded-lg border border-amber-100 dark:border-amber-800/30 overflow-hidden">
+                  <div className="px-4 py-3 bg-amber-50 dark:bg-amber-900/30 border-b border-amber-100 dark:border-amber-800/30 flex justify-between items-center">
+                    <span className="font-medium text-amber-800 dark:text-amber-300 flex items-center gap-2">
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Example Output
                     </span>
-                    <span className="text-xs text-gray-500 font-normal">
-                      Show what results to expect
+                    <span className="text-xs text-amber-600 dark:text-amber-400 font-normal">
+                      What results to expect
                     </span>
-                  </label>
-                  <textarea
-                    name="exampleOutput"
-                    value={form.exampleOutput}
-                    onChange={handleChange}
-                    rows={4}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors duration-200 font-mono text-sm"
-                    placeholder='# Sample Output
+                  </div>
+                  <div className="p-4">
+                    <textarea
+                      name="exampleOutput"
+                      value={form.exampleOutput}
+                      onChange={handleChange}
+                      rows={4}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors duration-200 font-mono text-sm"
+                      placeholder='# Sample Output
     1. "The Art of Minimalism" — Tips and habits for living simply...
     2. "Digital Detox Challenge" — A 7-day plan to reduce screen time...'
-                  />
+                    />
+                    <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 italic">
+                      Provide an example of what the AI might respond with
+                    </p>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block mb-2 font-medium text-gray-700 dark:text-gray-300 flex justify-between">
-                    <span>
-                      Expected Response Format{" "}
-                      <span className="text-gray-400 font-normal">(optional)</span>
+                <div className="bg-white dark:bg-gray-800 rounded-lg border border-amber-100 dark:border-amber-800/30 overflow-hidden">
+                  <div className="px-4 py-3 bg-amber-50 dark:bg-amber-900/30 border-b border-amber-100 dark:border-amber-800/30 flex justify-between items-center">
+                    <span className="font-medium text-amber-800 dark:text-amber-300 flex items-center gap-2">
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h8m-8 6h16" />
+                      </svg>
+                      Expected Response Format
                     </span>
-                    <span className="text-xs text-gray-500 font-normal">
-                      What format should the AI output?
+                    <span className="text-xs text-amber-600 dark:text-amber-400 font-normal">
+                      Output structure
                     </span>
-                  </label>
-                  <select
-                    name="expectedResponse"
-                    value={form.expectedResponse}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors duration-200"
-                  >
-                    <option value="">Select format</option>
-                    <option value="Text">Text</option>
-                    <option value="List">List</option>
-                    <option value="List with explanations">
-                      List with explanations
-                    </option>
-                    <option value="Table">Table</option>
-                    <option value="JSON">JSON</option>
-                    <option value="Markdown">Markdown</option>
-                    <option value="Code">Code</option>
-                    <option value="Step-by-step">Step-by-step</option>
-                    <option value="Conversation">Conversation</option>
-                    <option value="Other">Other</option>
-                  </select>
+                  </div>
+                  <div className="p-4">
+                    <select
+                      name="expectedResponse"
+                      value={form.expectedResponse}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors duration-200"
+                    >
+                      <option value="">Select format</option>
+                      <option value="Text">Text</option>
+                      <option value="List">List</option>
+                      <option value="List with explanations">List with explanations</option>
+                      <option value="Table">Table</option>
+                      <option value="JSON">JSON</option>
+                      <option value="Markdown">Markdown</option>
+                      <option value="Code">Code</option>
+                      <option value="Step-by-step">Step-by-step</option>
+                      <option value="Conversation">Conversation</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 italic">
+                      What format should the AI response be in?
+                    </p>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block mb-2 font-medium text-gray-700 dark:text-gray-300 flex justify-between">
-                    <span>
-                      Prompt Tips/Instructions{" "}
-                      <span className="text-gray-400 font-normal">(optional)</span>
+                <div className="bg-white dark:bg-gray-800 rounded-lg border border-amber-100 dark:border-amber-800/30 overflow-hidden">
+                  <div className="px-4 py-3 bg-amber-50 dark:bg-amber-900/30 border-b border-amber-100 dark:border-amber-800/30 flex justify-between items-center">
+                    <span className="font-medium text-amber-800 dark:text-amber-300 flex items-center gap-2">
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Prompt Tips & Instructions
                     </span>
-                    <span className="text-xs text-gray-500 font-normal">
+                    <span className="text-xs text-amber-600 dark:text-amber-400 font-normal">
                       Advice for best results
                     </span>
-                  </label>
-                  <textarea
-                    name="tips"
-                    value={form.tips}
-                    onChange={handleChange}
-                    rows={3}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors duration-200"
-                    placeholder="Any advice for using this prompt effectively? E.g., 'Replace {topic} with your specific subject' or 'Works best with detailed context'"
-                  />
+                  </div>
+                  <div className="p-4">
+                    <textarea
+                      name="tips"
+                      value={form.tips}
+                      onChange={handleChange}
+                      rows={3}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors duration-200"
+                      placeholder="Any advice for using this prompt effectively? E.g., 'Replace {topic} with your specific subject' or 'Works best with detailed context'"
+                    />
+                    <div className="mt-3 flex items-start gap-2">
+                      <svg className="h-5 w-5 text-amber-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Provide helpful tips on how to get the best results with this prompt. Explain any variables or special instructions.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            </Accordion>
 
-            <div className="flex justify-end">
+            <div className="flex justify-between items-center mt-8">
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="px-6 py-3 rounded-full text-gray-600 dark:text-gray-300 font-medium border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 flex items-center gap-2"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Idea
+              </button>
+              
               <button
                 type="submit"
-                disabled={submitting}
+                disabled={submitting || !form.title || !form.content}
                 className={clsx(
-                  "px-8 py-3 rounded-full text-white font-medium shadow-md transition-all duration-300",
-                  submitting
+                  "px-8 py-3 rounded-full text-white font-medium shadow-md transition-all duration-300 min-w-[180px]",
+                  (submitting || !form.title || !form.content)
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 hover:shadow-lg",
                 )}
               >
                 {submitting ? (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <svg
                       className="animate-spin h-5 w-5 text-white"
                       fill="none"
@@ -1215,7 +1385,12 @@ export default function ContributePage() {
                     <span>Saving Prompt...</span>
                   </div>
                 ) : (
-                  <span>Save Prompt</span>
+                  <div className="flex items-center justify-center gap-2">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>{isEditMode ? 'Update Prompt' : 'Save Prompt'}</span>
+                  </div>
                 )}
               </button>
             </div>
