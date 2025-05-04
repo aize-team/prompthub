@@ -5,7 +5,7 @@ import { db } from '@/lib/firebase';
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest, context: any) {
-  const { id } = context.params;
+  const { id } = (await context.params);
   try {
     // Query Firestore for the prompt with the given ID
     const promptDoc = await db.collection('prompts').doc(id).get();

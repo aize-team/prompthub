@@ -10,7 +10,7 @@ export async function PUT(request: Request, context: any) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    const id = context.params?.id;
+    const id = (await context.params).id;
     const data = await request.json();
 
     if (!data.title || !data.content) {

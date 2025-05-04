@@ -8,7 +8,7 @@ export async function POST(
   request: NextRequest,
   context: any
 ) {
-  const { id } = context.params;
+  const { id } = (await context.params);
 
   try {
     // Read the data file
