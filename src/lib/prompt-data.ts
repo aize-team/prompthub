@@ -10,9 +10,17 @@ export type PromptDetail = {
   useCases: PromptUseCase[];
   category: PromptCategory;
   tags: PromptTag[] | string;
-  author: string; // Added author field
-  likes: number; // Added likes field
-  copies: number; // Added copies field
+  author: string;
+  likes: number;
+  copies: number;
+  // Additional fields for the contribute page
+  model?: string;
+  promptType?: string;
+  complexityLevel?: string;
+  example?: string;
+  tips?: string;
+  expectedResponse?: string;
+  isAnonymous?: boolean;
 };
 
 // Function to fetch all prompts from the data file
