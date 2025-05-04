@@ -81,9 +81,19 @@ function ExploreContent() {
         prompt.content.toLowerCase().includes(lowerSearchTerm) ||
         prompt.category.toLowerCase().includes(lowerSearchTerm) ||
         prompt.useCases.some(uc => uc.toLowerCase().includes(lowerSearchTerm)) ||
-        prompt.tags.some(tag => tag.toLowerCase().includes(lowerSearchTerm));
+        (Array.isArray(prompt.tags)
+          ? prompt.tags.some(tag => tag.toLowerCase().includes(lowerSearchTerm))
+          : typeof prompt.tags === 'string'
+            ? prompt.tags.split(',').map(tag => tag.trim()).filter(Boolean).some(tag => tag.toLowerCase().includes(lowerSearchTerm))
+            : false);
 
-      const matchesTag = selectedTag === null || prompt.tags.map(t => t.toLowerCase()).includes(selectedTag.toLowerCase());
+      const matchesTag = selectedTag === null || (
+        Array.isArray(prompt.tags)
+          ? prompt.tags.map(t => t.toLowerCase()).includes(selectedTag.toLowerCase())
+          : typeof prompt.tags === 'string'
+            ? prompt.tags.split(',').map(t => t.trim().toLowerCase()).includes(selectedTag.toLowerCase())
+            : false
+      );
 
       return matchesSearch && matchesTag;
     });

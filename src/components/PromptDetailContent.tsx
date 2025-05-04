@@ -42,15 +42,24 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
             <h1 className="text-3xl md:text-5xl font-bold mb-6 p-a text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">{prompt.title}</h1>
 
             {/* Tags display */}
-            {prompt.tags && prompt.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-6">
-                {prompt.tags.map((tag, index) => (
-                  <Badge key={index} variant="secondary" className="text-xs bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 px-3 py-1 rounded-full shadow-sm">
-                    #{tag}
-                  </Badge>
-                ))}
-              </div>
-            )}
+            {(() => {
+              let tags: string[] = [];
+              if (Array.isArray(prompt.tags)) {
+                tags = prompt.tags;
+              } else if (typeof prompt.tags === 'string') {
+                tags = prompt.tags.split(',').map(t => t.trim()).filter(Boolean);
+              }
+              return tags.length > 0 ? (
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {tags.map((tag, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 px-3 py-1 rounded-full shadow-sm">
+                      #{tag}
+                    </Badge>
+                  ))}
+                </div>
+              ) : null;
+            })()}
+
 
             {/* Category, Author, and metadata */}
             <div className="flex flex-wrap items-center text-sm text-gray-600 dark:text-gray-400 mb-8 gap-4">

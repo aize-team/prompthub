@@ -27,9 +27,10 @@ const PromptCard = ({ prompt }: PromptCardProps) => {
           } else if (typeof prompt.tags === 'string') {
             tags = prompt.tags.split(',').map(t => t.trim()).filter(Boolean);
           }
+          // Always operate on tags as an array
           return tags.length > 0 ? (
             <div className="flex flex-wrap gap-1 mb-3">
-              {tags.slice(0, 3).map((tag) => (
+              {(tags.slice(0, 3)).map((tag: string) => (
                 <Badge key={tag} variant="secondary" className="text-xs bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
                   {tag}
                 </Badge>

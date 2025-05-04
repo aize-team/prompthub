@@ -111,7 +111,11 @@ export function usePromptData() {
     if (promptsCache.data) {
       const tagSet = new Set<PromptTag>();
       promptsCache.data.forEach(prompt => {
-        prompt.tags.forEach(tag => tagSet.add(tag.toLowerCase()));
+        if (Array.isArray(prompt.tags)) {
+          prompt.tags.forEach((tag: string) => tagSet.add(tag.toLowerCase()));
+        } else if (typeof prompt.tags === 'string') {
+          prompt.tags.split(',').map(tag => tag.trim()).filter(Boolean).forEach((tag: string) => tagSet.add(tag.toLowerCase()));
+        }
       });
       const uniqueTags = Array.from(tagSet).sort();
 
@@ -134,7 +138,11 @@ export function usePromptData() {
       if (prompts && Array.isArray(prompts)) {
         const tagSet = new Set<PromptTag>();
         prompts.forEach((prompt: PromptDetail) => {
-          prompt.tags.forEach(tag => tagSet.add(tag.toLowerCase()));
+          if (Array.isArray(prompt.tags)) {
+            prompt.tags.forEach((tag: string) => tagSet.add(tag.toLowerCase()));
+          } else if (typeof prompt.tags === 'string') {
+            prompt.tags.split(',').map(tag => tag.trim()).filter(Boolean).forEach((tag: string) => tagSet.add(tag.toLowerCase()));
+          }
         });
         const uniqueTags = Array.from(tagSet).sort();
 

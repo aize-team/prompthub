@@ -448,11 +448,16 @@ const Home = () => {
                           </div>
                           <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">{prompt.content}</p>
                           <div className="flex flex-wrap gap-2 mt-auto">
-                            {prompt.tags.slice(0, 3).map((tag: string) => (
-                              <span key={tag} className="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-                                #{tag}
-                              </span>
-                            ))}
+                            {(Array.isArray(prompt.tags)
+  ? prompt.tags.slice(0, 3)
+  : typeof prompt.tags === 'string'
+    ? prompt.tags.split(',').map(tag => tag.trim()).filter(Boolean).slice(0, 3)
+    : []
+).map((tag: string) => (
+  <span key={tag} className="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+    #{tag}
+  </span>
+))}
                           </div>
                         </div>
                         <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/80 flex justify-between items-center">
@@ -538,11 +543,16 @@ const Home = () => {
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mb-3">{prompt.content}</p>
                     <div className="flex flex-wrap gap-1">
-                      {prompt.tags.slice(0, 2).map((tag: string) => (
-                        <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-                          #{tag}
-                        </span>
-                      ))}
+                      {(Array.isArray(prompt.tags)
+  ? prompt.tags.slice(0, 2)
+  : typeof prompt.tags === 'string'
+    ? prompt.tags.split(',').map(tag => tag.trim()).filter(Boolean).slice(0, 2)
+    : []
+).map((tag: string) => (
+  <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+    #{tag}
+  </span>
+))}
                     </div>
                   </div>
                 </div>

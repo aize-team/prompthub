@@ -9,7 +9,7 @@ export type PromptDetail = {
   content: string;
   useCases: PromptUseCase[];
   category: PromptCategory;
-  tags: PromptTag[];
+  tags: PromptTag[] | string;
   author: string; // Added author field
   likes: number; // Added likes field
   copies: number; // Added copies field
@@ -72,7 +72,11 @@ export const getAllTags = async (): Promise<PromptTag[]> => {
     const allPrompts = await fetchPrompts(); // This will now fetch from the JSON file
     const tagSet = new Set<PromptTag>();
     allPrompts.forEach(prompt => {
-      prompt.tags.forEach(tag => tagSet.add(tag.toLowerCase()));
+      if (Array.isArray(prompt.tags)) {
+        prompt.tags.forEach((tag: string) => tagSet.add(tag.toLowerCase()));
+      } else if (typeof prompt.tags === 'string') {
+        prompt.tags.split(',').map(tag => tag.trim()).filter(Boolean).forEach((tag: string) => tagSet.add(tag.toLowerCase()));
+      }
     });
     return Array.from(tagSet).sort();
   } catch (error) {
