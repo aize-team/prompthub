@@ -145,8 +145,9 @@ const PromptSettingsSidebar: React.FC<PromptSettingsSidebarProps> = ({
     }
     
     if (usingIndividualProps) {
-      const callback = props[`on${field.charAt(0).toUpperCase() + field.slice(1)}Change`];
-      if (callback && typeof callback === 'function') {
+      const callbackName = `on${field.charAt(0).toUpperCase() + field.slice(1)}Change` as keyof typeof props;
+      const callback = props[callbackName] as ((value: any) => void) | undefined;
+      if (typeof callback === 'function') {
         callback(value);
       }
     } else if (onChange) {

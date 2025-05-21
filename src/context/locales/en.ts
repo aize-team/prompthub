@@ -140,7 +140,6 @@ const en = {
   'prompt.uncategorized': 'Uncategorized',
   'prompt.added-recently': 'Added recently',
   'prompt.ai-prompt': 'AI Prompt',
-  'prompt.copy': 'Copy',
   'prompt.try-aize': 'Try with Aize Chat',
   'prompt.details': 'Details',
   'prompt.use-cases': 'Use Cases',

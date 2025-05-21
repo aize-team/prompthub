@@ -5,7 +5,7 @@ interface PromptData {
   content: string;
   category?: string;
   model?: string;
-  tags?: string;
+  tags?: string | string[];
   promptType?: string;
   complexityLevel?: string;
   useCases?: string[];

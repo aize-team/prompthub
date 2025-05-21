@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, Suspense, use, useCallback } from 'react';
+import React, { useState, useEffect, Suspense, useCallback, use } from 'react';
 import { usePromptEditor } from '@/hooks/usePromptEditor';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -16,13 +16,7 @@ import { getPromptById } from '@/lib/prompt-data';
 import { Skeleton } from '@/components/ui/skeleton';
 import PromptActions from '@/components/contribute/PromptActions';
 
-interface EditPromptPageProps {
-  params: {
-    id: string;
-  };
-}
-
-function EditPromptContent({ params }: EditPromptPageProps) {
+function EditPromptContent({ params }: { params: { id: string } }) {
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -36,12 +30,24 @@ function EditPromptContent({ params }: EditPromptPageProps) {
   const isLoggedIn = !!session;
   const router = useRouter();
   const { t } = useLanguage();
-  const unwrappedParams = use(params);
-  const promptId = unwrappedParams.id;
+  const promptId = params.id;
 
   const [isLoading, setIsLoading] = useState(true);
-  const [promptData, setPromptData] = useState({
-    id: promptId,
+  const [promptData, setPromptData] = useState<{
+    id: string;
+    title: string;
+    content: string;
+    category: string;
+    model?: string;
+    tags: string | string[];
+    promptType?: string;
+    complexityLevel?: string;
+    useCases: string[];
+    example?: string;
+    tips?: string;
+    expectedResponse?: string;
+  }>({
+    id: promptId || '',
     title: '',
     content: '',
     category: '',
@@ -53,8 +59,9 @@ function EditPromptContent({ params }: EditPromptPageProps) {
     example: '',
     tips: '',
     expectedResponse: '',
+
   });
-  
+
   // Load prompt data when component mounts or promptId changes
   useEffect(() => {
     const loadPrompt = async () => {
@@ -67,12 +74,13 @@ function EditPromptContent({ params }: EditPromptPageProps) {
             useCases: data.useCases || [],
             category: data.category || '',
             model: data.model || '',
-            tags: data.tags || '',
+            tags: Array.isArray(data.tags) ? data.tags.join(', ') : data.tags || '',
             promptType: data.promptType || '',
             complexityLevel: data.complexityLevel || '',
             example: data.example || '',
             tips: data.tips || '',
             expectedResponse: data.expectedResponse || '',
+
           });
         }
       } catch (error) {
@@ -121,14 +129,14 @@ function EditPromptContent({ params }: EditPromptPageProps) {
         console.log('Clearing existing timer');
         clearTimeout(saveTimer);
       }
-      
+
       const timer = setTimeout(() => {
         console.log('Save timer fired, calling handleAutoSave');
         handleAutoSave();
       }, 2000); // 2 second debounce
-      
+
       setSaveTimer(timer);
-      
+
       return () => {
         console.log('Cleanup: clearing timer');
         if (saveTimer) clearTimeout(saveTimer);
@@ -148,7 +156,7 @@ function EditPromptContent({ params }: EditPromptPageProps) {
     console.log('Setting hasUnsavedChanges to true');
     setHasUnsavedChanges(true);
   };
-  
+
   // Auto-save function
   const handleAutoSave = useCallback(async () => {
     console.log('handleAutoSave called', { hasUnsavedChanges, isSaving });
@@ -156,26 +164,26 @@ function EditPromptContent({ params }: EditPromptPageProps) {
       console.log('Skipping auto-save - no unsaved changes or already saving');
       return;
     }
-    
+
     try {
       console.log('Starting auto-save...');
       setAutoSaveStatus('saving');
       console.log('autoSaveStatus set to "saving"');
-      
+
       await handleSave();
-      
+
       console.log('Auto-save successful');
       setHasUnsavedChanges(false);
       setLastSaved(new Date());
       setAutoSaveStatus('saved');
       console.log('autoSaveStatus set to "saved"');
-      
+
       // Reset saved status after 2 seconds
       setTimeout(() => {
         console.log('Resetting autoSaveStatus to "idle"');
         setAutoSaveStatus('idle');
       }, 2000);
-      
+
     } catch (error) {
       console.error('Auto-save failed:', error);
       setAutoSaveStatus('idle');
@@ -197,6 +205,7 @@ function EditPromptContent({ params }: EditPromptPageProps) {
   // Handle form reset
   const handleReset = () => {
     setPromptData({
+      id: promptId || '',
       title: '',
       content: '',
       category: '',
@@ -232,7 +241,7 @@ function EditPromptContent({ params }: EditPromptPageProps) {
 
   // Create the left sidebar content
   const leftSidebar = (
-    <PromptHistorySidebar 
+    <PromptHistorySidebar
       onSelectPrompt={(prompt) => {
         router.push(`/contribute/edit/${prompt.id}`);
       }}
@@ -265,7 +274,7 @@ function EditPromptContent({ params }: EditPromptPageProps) {
           <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
             {promptData.title || 'Untitled Prompt'}
           </h1>
-          <PromptActions 
+          <PromptActions
             title={promptData.title}
             content={promptData.content}
             promptId={promptId}
@@ -284,13 +293,13 @@ function EditPromptContent({ params }: EditPromptPageProps) {
           />
         </div>
       </div>
-      
+
       {/* Footer - fixed height */}
       <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center">
-            <AutoSaveStatus 
-              status={autoSaveStatus} 
+            <AutoSaveStatus
+              status={autoSaveStatus}
               lastSaved={lastSaved}
               hasUnsavedChanges={hasUnsavedChanges}
             />
@@ -298,7 +307,7 @@ function EditPromptContent({ params }: EditPromptPageProps) {
           <ContributeActions
             onSave={handleSubmit}
             onClear={handleReset}
-            isSaving={isSaving}
+            isSubmitting={isSaving}
             isValid={isFormValid()}
           />
         </div>
@@ -308,17 +317,18 @@ function EditPromptContent({ params }: EditPromptPageProps) {
 
   return (
     <>
-      <ContributeLayout 
+      <ContributeLayout
         leftSidebar={leftSidebar}
         rightSidebar={rightSidebar}
       >
         {mainContent}
       </ContributeLayout>
-      
+
       {/* Notification */}
       {notification.show && (
         <div className="fixed bottom-4 right-4 z-50">
           <Notification
+            show={notification.show}
             type={notification.type}
             message={notification.message}
             onClose={() => setNotification({ ...notification, show: false })}
@@ -329,13 +339,18 @@ function EditPromptContent({ params }: EditPromptPageProps) {
   );
 }
 
-// Wrapper component that handles the Suspense boundary
-function EditPromptPage({ params }: EditPromptPageProps) {
+// Main export function
+export default function EditPromptPage(props: any) {
+  const params = props.params;
+  const id = params.id;
+
+  if (!id) {
+    return <div>Error: No prompt ID provided</div>;
+  }
+
   return (
     <Suspense fallback={<Skeleton className="w-full h-screen" />}>
-      <EditPromptContent params={params} />
+      <EditPromptContent params={{ id }} />
     </Suspense>
   );
 }
-
-export default EditPromptPage;
