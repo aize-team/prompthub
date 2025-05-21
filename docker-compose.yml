@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      target: ${TARGET:-deps}
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
+    env_file:
+      - .env.${NODE_ENV:-development}
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - NEXT_PUBLIC_APP_ENV=${NODE_ENV:-development}
+    restart: unless-stopped
+    networks:
+      - prompthub-network
+
+networks:
+  prompthub-network:
+    driver: bridge

@@ -1,0 +1,34 @@
+# Dependencies
+node_modules
+.next
+
+# Build files
+out
+build
+
+# Environment files
+.env*.local
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local development
+.DS_Store
+
+# IDE specific files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Test files
+coverage
+
+# Misc
+.cache
+dist

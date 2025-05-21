@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useAutoSavePrompt } from '@/hooks/useAutoSavePrompt';
 import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
@@ -12,8 +12,9 @@ import ContributeActions from '@/components/contribute/ContributeActions';
 import AutoSaveStatus from '@/components/contribute/AutoSaveStatus';
 import Notification from '@/components/ui/Notification';
 import { getPromptById } from '@/lib/prompt-data';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default function ContributePage() {
+function ContributeContent() {
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const [notification, setNotification] = useState<{
     show: boolean;
@@ -265,5 +266,18 @@ const isRecommendedFilled = Boolean(
         onClose={() => setNotification({ ...notification, show: false })}
       />
     </ContributeLayout>
+  );
+}
+
+// Wrapper component that handles the Suspense boundary
+export default function ContributePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen w-full items-center justify-center">
+        <Skeleton className="h-4 w-[250px]" />
+      </div>
+    }>
+      <ContributeContent />
+    </Suspense>
   );
 }
