@@ -14,6 +14,7 @@ import AutoSaveStatus from '@/components/contribute/AutoSaveStatus';
 import Notification from '@/components/ui/Notification';
 import { getPromptById } from '@/lib/prompt-data';
 import { Skeleton } from '@/components/ui/skeleton';
+import PromptActions from '@/components/contribute/PromptActions';
 
 interface EditPromptPageProps {
   params: {
@@ -258,9 +259,23 @@ function EditPromptContent({ params }: EditPromptPageProps) {
   // Main content
   const mainContent = (
     <div className="flex flex-col h-[calc(100vh-4rem)]">
+      {/* Header with title and actions */}
+      <div className="border-b border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+            {promptData.title || 'Untitled Prompt'}
+          </h1>
+          <PromptActions 
+            title={promptData.title}
+            content={promptData.content}
+            promptId={promptId}
+          />
+        </div>
+      </div>
+
       {/* Editor area - takes remaining space */}
       <div className="flex-1 overflow-auto p-4 sm:p-6">
-        <div className="h-full">
+        <div className="h-full max-w-4xl mx-auto">
           <PromptEditor
             title={promptData.title}
             content={promptData.content}
