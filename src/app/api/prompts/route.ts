@@ -55,9 +55,9 @@ export async function POST(request: Request) {
       user_id: userId,
       // Include available user info for future reference
       user_details: {
-        email: session.user.email,
-        name: session.user.name,
-        image: session.user.image
+        email: session.user.email || null,
+        name: session.user.name || null,
+        image: session.user.image || null
       },
       updatedAt: {
         seconds: Math.floor(Date.now() / 1000),

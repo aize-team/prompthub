@@ -1,4 +1,15 @@
 const en = {
+  // Step 1 Contribute Page
+  'contribute.step1.title': 'Craft Your Perfect Prompt',
+  'contribute.step1.subtitle': 'Start with a simple idea, and we\'ll help you structure it into an effective AI prompt.',
+  'contribute.step1.placeholder': 'e.g., A creative writing prompt about a time-traveling historian...',
+  'contribute.step1.button': 'Craft My Prompt',
+  'contribute.step1.processing': 'Crafting Your Prompt...',
+  'contribute.step1.characters': 'characters',
+  'contribute.step1.tips.heading': 'Quick Tips',
+  'contribute.step1.tips.specific': 'Be specific about what you want the AI to generate',
+  'contribute.step1.tips.context': 'Include relevant context or examples',
+  'contribute.step1.tips.tone': 'Specify the desired tone and format',
   // Contribute Page
   'contribute.prompt-settings': 'Prompt Settings',
   'contribute.category': 'Category',

@@ -1,4 +1,15 @@
 const fa = {
+  // صفحه مشارکت مرحله اول
+  'contribute.step1.title': 'پرامپت عالی خود را بسازید',
+  'contribute.step1.subtitle': 'با یک ایده ساده شروع کنید، و ما به شما کمک می‌کنیم آن را به یک پرامپت هوش مصنوعی مؤثر تبدیل کنید.',
+  'contribute.step1.placeholder': 'مثال: یک پرامپت نوشتن خلاقانه درباره یک مورخ مسافر زمان...',
+  'contribute.step1.button': 'پرامپت من را بساز',
+  'contribute.step1.processing': 'در حال ساخت پرامپت شما...',
+  'contribute.step1.characters': 'کاراکتر',
+  'contribute.step1.tips.heading': 'نکات سریع',
+  'contribute.step1.tips.specific': 'درباره آنچه می‌خواهید هوش مصنوعی تولید کند، دقیق باشید',
+  'contribute.step1.tips.context': 'زمینه یا مثال‌های مرتبط را اضافه کنید',
+  'contribute.step1.tips.tone': 'لحن و قالب مورد نظر را مشخص کنید',
   // صفحه مشارکت (Contribute Page)
   'contribute.prompt-settings': 'تنظیمات پرامپت',
   'contribute.category': 'دسته‌بندی',

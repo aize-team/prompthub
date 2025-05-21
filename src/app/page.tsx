@@ -98,27 +98,39 @@ const Home = () => {
 
       const data = await response.json();
 
-      // Update the form with the processed data
-      setForm(prev => ({
-        ...prev,
+      // Prepare the data for localStorage and the contribute page
+      const formDataForContribute = {
         title: data.title || '',
         content: data.content || '',
-        tags: data.tags || '',
+        tags: data.tags || '', // Assuming API returns tags as a string or will be handled by contribute page
         category: data.category || '',
         model: data.model || '',
         promptType: data.promptType || '',
         complexityLevel: data.complexityLevel || '',
         useCases: Array.isArray(data.useCases) ? data.useCases : [],
+        example: data.exampleOutput || data.example || '', // Prioritize exampleOutput if available
         tips: data.tips || '',
-        exampleOutput: data.exampleOutput || '',
         expectedResponse: data.expectedResponse || '',
-        contextLength: data.contextLength || '',
+        // contextLength: data.contextLength || '', // Not currently in contribute form, can be added if needed
+      };
+
+      // Update the local form state (optional, as we are redirecting)
+      setForm(prev => ({
+        ...prev,
+        ...formDataForContribute
       }));
       
-      // Scroll to the result section
-      setTimeout(() => {
-        document.getElementById('generate-prompt')?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+      // Save to localStorage for the contribute page
+      localStorage.setItem('cachedPromptForm', JSON.stringify(formDataForContribute));
+      localStorage.setItem('cachedPromptStep', '2');
+
+      // Redirect to the contribute page
+      router.push('/contribute');
+
+      // Original scroll behavior, now less relevant due to redirect
+      // setTimeout(() => {
+      //   document.getElementById('generate-prompt')?.scrollIntoView({ behavior: 'smooth' });
+      // }, 100);
     } catch (error) {
       console.error('Error processing prompt:', error);
       setError(typeof error === 'string' ? error : t('generate.error-processing'));
@@ -330,125 +342,49 @@ const Home = () => {
         </div>
       </section>
 
-      {(error || form.title) && (
-        <>
-          <section className="py-8 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
-            <div className="container mx-auto px-6">
-              <div className="max-w-4xl mx-auto">
-                {error && (
-                  <div className="mb-8 p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-sm flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>{error}</span>
-                  </div>
-                )}
-
-                {form.title && (
-                  <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-                    <h3 className="text-xl font-semibold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">{t('generate.result-title')}</h3>
-
-                    <div className="bg-gray-50 dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-md">
-                      {/* Result header */}
-                      <div className="bg-white dark:bg-gray-800 px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                        <div className="flex items-center">
-                          <div className="w-3 h-3 rounded-full bg-red-400 mr-2"></div>
-                          <div className="w-3 h-3 rounded-full bg-yellow-400 mr-2"></div>
-                          <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                        </div>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">{t('prompt.ai-prompt')}</span>
-                      </div>
-
-                      {/* Result content */}
-                      <div className="p-5">
-                        <div className="mb-4">
-                          <span className="font-medium text-gray-700 dark:text-gray-300">{t('generate.result-prompt-title')}:</span>
-                          <h4 className="text-lg font-semibold mt-1 text-gray-900 dark:text-white">{form.title}</h4>
-                        </div>
-
-                        <div className="mb-4">
-                          <span className="font-medium text-gray-700 dark:text-gray-300">{t('generate.result-prompt-content')}:</span>
-                          <div className="mt-2 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg whitespace-pre-wrap text-gray-700 dark:text-gray-300 shadow-inner">
-                            {form.content}
-                          </div>
-                        </div>
-
-                        <div className="mb-4">
-                          <span className="font-medium text-gray-700 dark:text-gray-300">{t('generate.result-prompt-tags')}:</span>
-                          <div className="flex flex-wrap gap-2 mt-2">
-                            {form.tags.split(',').map((tag: string, index: number) => (
-                              <span key={index} className="text-xs px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800/50">
-                                #{tag.trim()}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-
-                        {form.tips && (
-                          <div className="mb-4">
-                            <span className="font-medium text-gray-700 dark:text-gray-300">{t('prompt.tips')}:</span>
-                            <div className="mt-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-100 dark:border-yellow-800/30 rounded-lg text-yellow-800 dark:text-yellow-200 text-sm">
-                              {form.tips}
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="mt-6 flex flex-wrap gap-4 justify-between items-center">
-                          <div>
-                            <span className="text-xs text-gray-500 dark:text-gray-400 block mb-1">{t('prompt.complexity')}:</span>
-                            <span className="inline-block px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-full">
-                              {form.complexityLevel}
-                            </span>
-                          </div>
-
-                          <button 
-                            onClick={() => {
-                              // Save form data to localStorage before navigating
-                              localStorage.setItem("cachedPromptForm", JSON.stringify(form));
-                              localStorage.setItem("cachedPromptStep", "2"); // Go directly to step 2
-                              // Navigate to contribute page
-                              router.push('/contribute');
-                            }}
-                            className="flex items-center gap-2 bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-800/50 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-lg transition-colors duration-300 font-medium text-sm"
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                            </svg>
-                            {t('generate.edit-and-contribute')}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
+      {error && (
+        <section className="py-8 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800" id="generate-prompt-result-error">
+          <div className="container mx-auto px-6">
+            <div className="max-w-4xl mx-auto">
+              {error && (
+                <div className="mb-8 p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-sm flex items-start">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>{error}</span>
+                </div>
+              )}
             </div>
-          </section>
-          <section className="py-20">
-            <div className="container mx-auto px-6">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold mb-4">{t('featured.title')}</h2>
-                <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{t('featured.description')}</p>
-              </div>
+          </div>
+        </section>
+      )}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {featuredPrompts.map((prompt: PromptDetail) => (
-                  <div key={prompt.id} className="group">
-                    <Link href={`/prompt/${prompt.id}`}>
-                      <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col border border-gray-100 dark:border-gray-700 group-hover:border-blue-200 dark:group-hover:border-blue-800/50 transform group-hover:-translate-y-2">
-                        <div className="h-2 bg-gradient-to-r from-blue-500 to-purple-600"></div>
-                        <div className="p-6 flex-grow">
-                          <div className="flex items-center mb-4">
-                            <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-semibold mr-3">
-                              {prompt.title.charAt(0).toUpperCase()}
-                            </div>
-                            <h3 className="font-semibold text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 flex-1 truncate">
-                              {prompt.title}
-                            </h3>
-                          </div>
-                          <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">{prompt.content}</p>
-                          <div className="flex flex-wrap gap-2 mt-auto">
-                            {(Array.isArray(prompt.tags)
+      {/* Popular Prompts Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">{t('popular.title')}</h2>
+            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{t('popular.description')}</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {popularPrompts.map((prompt: PromptDetail) => (
+              <div key={prompt.id} className="group">
+                <Link href={`/prompt/${prompt.id}`}>
+                  <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col border border-gray-100 dark:border-gray-700 group-hover:border-blue-200 dark:group-hover:border-blue-800/50 transform group-hover:-translate-y-2">
+                    <div className="h-2 bg-gradient-to-r from-blue-500 to-purple-600"></div>
+                    <div className="p-6 flex-grow">
+                      <div className="flex items-center mb-4">
+                        <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-semibold mr-3">
+                          {prompt.title.charAt(0).toUpperCase()}
+                        </div>
+                        <h3 className="font-semibold text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 flex-1 truncate">
+                          {prompt.title}
+                        </h3>
+                      </div>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">{prompt.content}</p>
+                      <div className="flex flex-wrap gap-2 mt-auto">
+                        {(Array.isArray(prompt.tags)
   ? prompt.tags.slice(0, 3)
   : typeof prompt.tags === 'string'
     ? prompt.tags.split(',').map(tag => tag.trim()).filter(Boolean).slice(0, 3)
@@ -458,29 +394,83 @@ const Home = () => {
     #{tag}
   </span>
 ))}
-                          </div>
-                        </div>
-                        <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/80 flex justify-between items-center">
-                          <span className="text-xs text-gray-500 dark:text-gray-400">AI Prompt</span>
-                          <span className="text-blue-600 dark:text-blue-400 text-sm font-medium group-hover:underline">{t('featured.view-details')} →</span>
-                        </div>
                       </div>
-                    </Link>
+                    </div>
+                    <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/80 flex justify-between items-center">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">AI Prompt</span>
+                      <span className="text-blue-600 dark:text-blue-400 text-sm font-medium group-hover:underline">{t('popular.view-details')} →</span>
+                    </div>
                   </div>
-                ))}
-              </div>
-
-              <div className="text-center mt-12">
-                <Link href="/explore" passHref>
-                  <button className="bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 font-medium py-3 px-8 rounded-lg border border-blue-200 dark:border-blue-800/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 shadow-sm hover:shadow-md">
-                    {t('featured.view-all')} <span className="ml-1">→</span>
-                  </button>
                 </Link>
               </div>
-            </div>
-          </section>
-        </>
-      )}
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link href="/explore" passHref>
+              <button className="bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 font-medium py-3 px-8 rounded-lg border border-blue-200 dark:border-blue-800/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 shadow-sm hover:shadow-md">
+                {t('popular.view-all')} <span className="ml-1">→</span>
+              </button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">{t('featured.title')}</h2>
+            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{t('featured.description')}</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {featuredPrompts.map((prompt: PromptDetail) => (
+              <div key={prompt.id} className="group">
+                <Link href={`/prompt/${prompt.id}`}>
+                  <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col border border-gray-100 dark:border-gray-700 group-hover:border-blue-200 dark:group-hover:border-blue-800/50 transform group-hover:-translate-y-2">
+                    <div className="h-2 bg-gradient-to-r from-blue-500 to-purple-600"></div>
+                    <div className="p-6 flex-grow">
+                      <div className="flex items-center mb-4">
+                        <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-semibold mr-3">
+                          {prompt.title.charAt(0).toUpperCase()}
+                        </div>
+                        <h3 className="font-semibold text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 flex-1 truncate">
+                          {prompt.title}
+                        </h3>
+                      </div>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">{prompt.content}</p>
+                      <div className="flex flex-wrap gap-2 mt-auto">
+                        {(Array.isArray(prompt.tags)
+  ? prompt.tags.slice(0, 3)
+  : typeof prompt.tags === 'string'
+    ? prompt.tags.split(',').map(tag => tag.trim()).filter(Boolean).slice(0, 3)
+    : []
+).map((tag: string) => (
+  <span key={tag} className="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+    #{tag}
+  </span>
+))}
+                      </div>
+                    </div>
+                    <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/80 flex justify-between items-center">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">AI Prompt</span>
+                      <span className="text-blue-600 dark:text-blue-400 text-sm font-medium group-hover:underline">{t('featured.view-details')} →</span>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link href="/explore" passHref>
+              <button className="bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 font-medium py-3 px-8 rounded-lg border border-blue-200 dark:border-blue-800/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 shadow-sm hover:shadow-md">
+                {t('featured.view-all')} <span className="ml-1">→</span>
+              </button>
+            </Link>
+          </div>
+        </div>
+      </section>
 
       <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-blue-900/20">
         <div className="container mx-auto px-6">
@@ -505,10 +495,10 @@ const Home = () => {
                   <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Common Platforms:</h3>
                   <div className="flex flex-wrap gap-2">
                     <a href="https://chat.aize.dev/" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-amber-500 to-yellow-300 dark:from-amber-600 dark:to-yellow-400 px-3 py-1 rounded text-sm font-medium text-white dark:text-white shadow-sm font-bold hover:from-amber-600 hover:to-yellow-400 transition-colors">Aize Chat</a>
-                    <span className="bg-white dark:bg-gray-800 px-3 py-1 rounded text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm">OpenAI ChatGPT</span>
-                    <span className="bg-white dark:bg-gray-800 px-3 py-1 rounded text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm">Google Gemini</span>
-                    <span className="bg-white dark:bg-gray-800 px-3 py-1 rounded text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm">Anthropic Claude</span>
-                    <span className="bg-white dark:bg-gray-800 px-3 py-1 rounded text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm">AI21 Studio</span>
+                    <span className="bg-white dark:bg-gray-800 px-3 py-1 rounded text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-200 dark:border-gray-700">OpenAI ChatGPT</span>
+                    <span className="bg-white dark:bg-gray-800 px-3 py-1 rounded text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-200 dark:border-gray-700">Google Gemini</span>
+                    <span className="bg-white dark:bg-gray-800 px-3 py-1 rounded text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-200 dark:border-gray-700">Anthropic Claude</span>
+                    <span className="bg-white dark:bg-gray-800 px-3 py-1 rounded text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-200 dark:border-gray-700">AI21 Studio</span>
                   </div>
                 </div>
               </div>
