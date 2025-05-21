@@ -19,9 +19,30 @@ interface PromptSettings {
 }
 
 interface PromptSettingsSidebarProps {
-  settings: PromptSettings;
-  onChange: (field: string, value: any) => void;
-  isLoggedIn: boolean;
+  // Original API
+  settings?: PromptSettings;
+  onChange?: (field: string, value: any) => void;
+  isLoggedIn?: boolean;
+  
+  // New API for individual props
+  category?: string;
+  model?: string;
+  tags?: string | string[];
+  promptType?: string;
+  complexityLevel?: string;
+  useCases?: string[];
+  example?: string;
+  tips?: string;
+  expectedResponse?: string;
+  onCategoryChange?: (value: string) => void;
+  onModelChange?: (value: string) => void;
+  onTagsChange?: (value: string) => void;
+  onPromptTypeChange?: (value: string) => void;
+  onComplexityLevelChange?: (value: string) => void;
+  onUseCasesChange?: (value: string[]) => void;
+  onExampleChange?: (value: string) => void;
+  onTipsChange?: (value: string) => void;
+  onExpectedResponseChange?: (value: string) => void;
 }
 
 const availableCategories = [
@@ -78,20 +99,74 @@ const SettingsSection: React.FC<{
 );
 
 const PromptSettingsSidebar: React.FC<PromptSettingsSidebarProps> = ({
-  settings,
+  // Original API
+  settings = {},
   onChange,
-  isLoggedIn,
+  isLoggedIn = true,
+  
+  // New API for individual props
+  category,
+  model,
+  tags: tagsProp,
+  promptType,
+  complexityLevel,
+  useCases: useCasesProp,
+  example,
+  tips,
+  expectedResponse,
+  onCategoryChange,
+  onModelChange,
+  onTagsChange,
+  onPromptTypeChange,
+  onComplexityLevelChange,
+  onUseCasesChange,
+  onExampleChange,
+  onTipsChange,
+  onExpectedResponseChange,
+  ...props
 }) => {
-  const { t } = useLanguage();
-  const { openModal } = useAuthModal();
-
+  // Handle both APIs
+  const usingIndividualProps = category !== undefined || model !== undefined;
+  
+  // Get values from the appropriate source
+  const getValue = (field: string, defaultValue: any = '') => {
+    if (usingIndividualProps) {
+      // @ts-ignore
+      return props[field] !== undefined ? props[field] : defaultValue;
+    }
+    return settings[field] !== undefined ? settings[field] : defaultValue;
+  };
+  
+  // Handle changes with the appropriate callback
   const handleChange = (field: string, value: any) => {
     if (!isLoggedIn) {
       openModal();
       return;
     }
-    onChange(field, value);
+    
+    if (usingIndividualProps) {
+      const callback = props[`on${field.charAt(0).toUpperCase() + field.slice(1)}Change`];
+      if (callback && typeof callback === 'function') {
+        callback(value);
+      }
+    } else if (onChange) {
+      onChange(field, value);
+    }
   };
+  
+  // Get current values
+  const currentCategory = usingIndividualProps ? (category || '') : getValue('category');
+  const currentModel = usingIndividualProps ? (model || '') : getValue('model');
+  const currentTags = usingIndividualProps ? (Array.isArray(tagsProp) ? tagsProp.join(', ') : tagsProp || '') : getValue('tags');
+  const currentPromptType = usingIndividualProps ? (promptType || '') : getValue('promptType');
+  const currentComplexityLevel = usingIndividualProps ? (complexityLevel || '') : getValue('complexityLevel');
+  const currentUseCases = usingIndividualProps ? (useCasesProp || []) : (Array.isArray(getValue('useCases')) ? getValue('useCases') : []);
+  const currentExample = usingIndividualProps ? (example || '') : getValue('example');
+  const currentTips = usingIndividualProps ? (tips || '') : getValue('tips');
+  const currentExpectedResponse = usingIndividualProps ? (expectedResponse || '') : getValue('expectedResponse');
+  
+  const { openModal } = useAuthModal();
+  const { t } = useLanguage();
 
   return (
     <div className="p-4 h-full overflow-y-auto">
@@ -99,7 +174,7 @@ const PromptSettingsSidebar: React.FC<PromptSettingsSidebarProps> = ({
       
       <SettingsSection title={t('contribute.category')}>
         <select
-          value={settings.category || ''}
+          value={currentCategory}
           onChange={(e) => handleChange('category', e.target.value)}
           className="w-full px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
           disabled={!isLoggedIn}
@@ -115,7 +190,7 @@ const PromptSettingsSidebar: React.FC<PromptSettingsSidebarProps> = ({
 
       <SettingsSection title={t('contribute.model')}>
         <select
-          value={settings.model || ''}
+          value={currentModel}
           onChange={(e) => handleChange('model', e.target.value)}
           className="w-full px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
           disabled={!isLoggedIn}
@@ -132,9 +207,20 @@ const PromptSettingsSidebar: React.FC<PromptSettingsSidebarProps> = ({
       <SettingsSection title={t('contribute.tags')}>
         <input
           type="text"
-          value={settings.tags || ''}
-          onChange={(e) => handleChange('tags', e.target.value)}
+          value={currentTags}
+          onChange={(e) => handleChange('tags', e.target.value.split(',').map(tag => tag.trim()))}
           placeholder={t('contribute.tags-placeholder')}
+          className="w-full px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+          readOnly={!isLoggedIn}
+        />
+      </SettingsSection>
+
+      <SettingsSection title={t('contribute.use-cases')}>
+        <input
+          type="text"
+          value={currentUseCases.join(', ')}
+          onChange={(e) => handleChange('useCases', e.target.value.split(',').map(uc => uc.trim()))}
+          placeholder={t('contribute.use-cases-placeholder')}
           className="w-full px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
           readOnly={!isLoggedIn}
         />
@@ -142,7 +228,7 @@ const PromptSettingsSidebar: React.FC<PromptSettingsSidebarProps> = ({
 
       <SettingsSection title={t('contribute.prompt-type')}>
         <select
-          value={settings.promptType || ''}
+          value={currentPromptType}
           onChange={(e) => handleChange('promptType', e.target.value)}
           className="w-full px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
           disabled={!isLoggedIn}
@@ -158,7 +244,7 @@ const PromptSettingsSidebar: React.FC<PromptSettingsSidebarProps> = ({
 
       <SettingsSection title={t('contribute.complexity-level')}>
         <select
-          value={settings.complexityLevel || ''}
+          value={currentComplexityLevel}
           onChange={(e) => handleChange('complexityLevel', e.target.value)}
           className="w-full px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
           disabled={!isLoggedIn}
@@ -174,7 +260,7 @@ const PromptSettingsSidebar: React.FC<PromptSettingsSidebarProps> = ({
 
       <SettingsSection title={t('contribute.example-usage')}>
         <textarea
-          value={settings.example || ''}
+          value={currentExample}
           onChange={(e) => handleChange('example', e.target.value)}
           placeholder={t('contribute.example-placeholder')}
           rows={3}
@@ -183,9 +269,20 @@ const PromptSettingsSidebar: React.FC<PromptSettingsSidebarProps> = ({
         />
       </SettingsSection>
 
+      <SettingsSection title={t('contribute.expected-response')}>
+        <textarea
+          value={currentExpectedResponse}
+          onChange={(e) => handleChange('expectedResponse', e.target.value)}
+          placeholder={t('contribute.expected-response-placeholder')}
+          rows={3}
+          className="w-full px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 resize-none"
+          readOnly={!isLoggedIn}
+        />
+      </SettingsSection>
+
       <SettingsSection title={t('contribute.tips')}>
         <textarea
-          value={settings.tips || ''}
+          value={currentTips}
           onChange={(e) => handleChange('tips', e.target.value)}
           placeholder={t('contribute.tips-placeholder')}
           rows={3}

@@ -120,12 +120,28 @@ const Home = () => {
         ...formDataForContribute
       }));
       
-      // Save to localStorage for the contribute page
-      localStorage.setItem('cachedPromptForm', JSON.stringify(formDataForContribute));
-      localStorage.setItem('cachedPromptStep', '2');
+      // Save the prompt to the database directly
+      try {
+        const saveResponse = await fetch('/api/prompts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formDataForContribute),
+        });
 
-      // Redirect to the contribute page
-      router.push('/contribute');
+        if (!saveResponse.ok) {
+          throw new Error(t('contribute.save-fail'));
+        }
+
+        const savedData = await saveResponse.json();
+        const promptId = savedData.id;
+
+        // Redirect to the edit page with the prompt ID
+        router.push(`/contribute/edit/${promptId}`);
+      } catch (saveError) {
+        console.error('Error saving prompt:', saveError);
+        setError(typeof saveError === 'string' ? saveError : t('contribute.save-fail'));
+        return;
+      }
 
       // Original scroll behavior, now less relevant due to redirect
       // setTimeout(() => {
