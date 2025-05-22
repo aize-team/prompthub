@@ -2,7 +2,7 @@ name: Docker CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -27,14 +27,14 @@ jobs:
 
       - name: Get version
         id: version
-        run: echo "version=$(node -p 'require(\"./package.json\").version')" >> $GITHUB_OUTPUT
+        run: echo "version=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
 
       - name: Extract metadata (labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ github.repository_owner }}/prompthub
-          
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -49,4 +49,3 @@ jobs:
       # - name: Deploy to server (optional)
       #   run: |
       #     echo "Deploy step here, e.g. SSH and docker-compose pull/up"
-
