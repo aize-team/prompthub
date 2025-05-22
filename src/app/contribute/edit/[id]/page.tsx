@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, Suspense, useCallback, use } from 'react';
+import React, { useState, useEffect, Suspense, useCallback } from 'react';
 import { usePromptEditor } from '@/hooks/usePromptEditor';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import ContributeLayout from '@/components/contribute/ContributeLayout';
 import PromptHistorySidebar from '@/components/contribute/PromptHistorySidebar';
@@ -16,7 +16,13 @@ import { getPromptById } from '@/lib/prompt-data';
 import { Skeleton } from '@/components/ui/skeleton';
 import PromptActions from '@/components/contribute/PromptActions';
 
-function EditPromptContent({ params }: { params: { id: string } }) {
+function EditPromptContent() {
+  const params = useParams<{ id: string }>();
+  const promptId = params?.id;
+  
+  if (!promptId) {
+    return <div>Error: No prompt ID provided</div>;
+  }
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -30,7 +36,9 @@ function EditPromptContent({ params }: { params: { id: string } }) {
   const isLoggedIn = !!session;
   const router = useRouter();
   const { t } = useLanguage();
-  const promptId = params.id;
+  if (!promptId) {
+    return <div>Error: No prompt ID provided</div>;
+  }
 
   const [isLoading, setIsLoading] = useState(true);
   const [promptData, setPromptData] = useState<{
@@ -272,22 +280,17 @@ function EditPromptContent({ params }: { params: { id: string } }) {
       <div className="border-b border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-            {promptData.title || 'Untitled Prompt'}
+            {promptData?.title || 'Edit Prompt'}
           </h1>
-          <PromptActions
-            title={promptData.title}
-            content={promptData.content}
-            promptId={promptId}
-          />
         </div>
       </div>
-
-      {/* Editor area - takes remaining space */}
-      <div className="flex-1 overflow-auto p-4 sm:p-6">
-        <div className="h-full max-w-4xl mx-auto">
+      
+      {/* Editor area */}
+      <div className="flex-1 overflow-auto">
+        <div className="h-full max-w-4xl mx-auto p-4">
           <PromptEditor
-            title={promptData.title}
-            content={promptData.content}
+            title={promptData?.title || ''}
+            content={promptData?.content || ''}
             onTitleChange={(value) => handleChange('title', value)}
             onContentChange={(value) => handleChange('content', value)}
           />
@@ -340,17 +343,22 @@ function EditPromptContent({ params }: { params: { id: string } }) {
 }
 
 // Main export function
-export default function EditPromptPage(props: any) {
-  const params = props.params;
-  const id = params.id;
-
-  if (!id) {
-    return <div>Error: No prompt ID provided</div>;
-  }
-
+export default function EditPromptPage() {
   return (
-    <Suspense fallback={<Skeleton className="w-full h-screen" />}>
-      <EditPromptContent params={{ id }} />
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4">
+        <Skeleton className="h-12 w-1/3 mb-6" />
+        <div className="flex gap-6">
+          <div className="w-1/4">
+            <Skeleton className="h-96 w-full" />
+          </div>
+          <div className="flex-1">
+            <Skeleton className="h-96 w-full" />
+          </div>
+        </div>
+      </div>
+    }>
+      <EditPromptContent />
     </Suspense>
   );
 }

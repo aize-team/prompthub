@@ -162,10 +162,10 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
                   <span>{copies} {t('prompt.copies')}</span>
                 </div>
               </div>
-              
+
               {/* Edit and Contribute Button - Transfers prompt details to contribute page */}
-              <a 
-                href={`/contribute?id=${prompt.id}`} 
+              <a
+                href={`/contribute/edit/${prompt.id}`}
                 className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-5 py-3 rounded-lg transition-all duration-300 font-medium shadow-md hover:shadow-xl transform hover:scale-105 border border-transparent"
                 aria-label="Edit and contribute to this prompt"
               >
