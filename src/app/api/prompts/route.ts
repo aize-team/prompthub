@@ -6,6 +6,14 @@ import { authOptions } from '@/lib/auth';
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  // Return empty array if Firebase is not initialized (build time)
+  if (!db) {
+    console.warn('Firebase is not initialized - running in build mode, returning empty array');
+    return NextResponse.json([], {
+      headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' }
+    });
+  }
+
   try {
     const promptsRef = db.collection('prompts');
     const snapshot = await promptsRef.get();
@@ -15,18 +23,37 @@ export async function GET() {
       ...doc.data()
     }));
 
-    return NextResponse.json(prompts);
+    return NextResponse.json(prompts, {
+      headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' }
+    });
   } catch (error) {
     console.error('Error fetching prompts:', error);
-    return NextResponse.json({ error: 'Failed to fetch prompts' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch prompts' },
+      { status: 500, 
+        headers: { 'Cache-Control': 'no-store' }
+      }
+    );
   }
 }
 
 export async function POST(request: Request) {
+  // Return 503 Service Unavailable if Firebase is not initialized
+  if (!db) {
+    console.warn('Firebase is not initialized - running in build mode');
+    return NextResponse.json(
+      { error: 'Service temporarily unavailable' },
+      { status: 503, headers: { 'Retry-After': '60' } }
+    );
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401, headers: { 'Cache-Control': 'no-store' } }
+      );
     }
 
     const data = await request.json();

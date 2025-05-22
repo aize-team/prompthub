@@ -95,6 +95,7 @@ async function analyzeAndExpandInput(promptIdea: string) {
 
 async function decomposeAndAddReasoning(expandedPrompt: string) {
     try {
+        const openai = getOpenAIClient();
         const response = await openai.chat.completions.create({
             model: "GPT-4.1 Nano",
             messages: [
@@ -147,6 +148,7 @@ async function decomposeAndAddReasoning(expandedPrompt: string) {
 
 async function suggestEnhancements(promptIdea: string) {
     try {
+        const openai = getOpenAIClient();
         const response = await openai.chat.completions.create({
             model: "GPT-4.1 Nano",
             messages: [
@@ -186,6 +188,7 @@ async function suggestEnhancements(promptIdea: string) {
 async function generateStructuredPrompt(components: any) {
     const { expandedPrompt, decompositionAndReasoning, suggestedEnhancements, promptIdea } = components;
     try {
+        const openai = getOpenAIClient();
         const response = await openai.chat.completions.create({
             model: "GPT-4.1 Nano",
             messages: [

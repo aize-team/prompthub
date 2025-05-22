@@ -2,7 +2,18 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
 import { v4 as uuidv4 } from 'uuid';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
+  // Return 503 Service Unavailable if Firebase is not initialized
+  if (!db) {
+    console.warn('Firebase is not initialized - running in build mode');
+    return NextResponse.json(
+      { error: 'Service temporarily unavailable' },
+      { status: 503, headers: { 'Retry-After': '60' } }
+    );
+  }
+
   try {
     const data = await request.json();
 

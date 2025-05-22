@@ -21,6 +21,12 @@ interface Prompt {
 
 export async function GET() {
     try {
+        // Add null check for db
+        if (!db) {
+          console.error('Error fetching user prompts: Firestore database instance is not available.');
+          return NextResponse.json({ error: 'Service temporarily unavailable. Please try again later.' }, { status: 503 });
+        }
+
         const session = await getServerSession(authOptions);
         if (!session || !session.user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

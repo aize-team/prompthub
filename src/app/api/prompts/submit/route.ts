@@ -36,6 +36,12 @@ export async function POST(request: NextRequest) {
       createdAt: new Date().toISOString(),
     };
 
+    // Add null check for db
+    if (!db) {
+      console.error('Error submitting prompt: Firestore database instance is not available.');
+      return NextResponse.json({ error: 'Service temporarily unavailable. Please try again later.' }, { status: 503 });
+    }
+
     // Add document to Firestore
     await db.collection('prompts').doc(promptData.id).set(promptData);
 
