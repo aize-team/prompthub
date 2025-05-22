@@ -1,14 +1,26 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-    baseURL: process.env.OPENAI_BASE_URL,
-});
+let openai: OpenAI | null = null;
+
+function getOpenAIClient() {
+    if (!process.env.OPENAI_API_KEY) {
+        throw new Error('OPENAI_API_KEY is not set in environment variables');
+    }
+    
+    if (!openai) {
+        openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
+            baseURL: process.env.OPENAI_BASE_URL,
+        });
+    }
+    
+    return openai;
+}
 
 async function analyzeAndExpandInput(promptIdea: string) {
     try {
+        const openai = getOpenAIClient();
         const response = await openai.chat.completions.create({
             model: "GPT-4.1 Nano",
             messages: [
@@ -409,16 +421,18 @@ export async function POST(request: Request) {
             );
         }
 
-        // Check if OpenAI API key is configured
-        if (process.env.OPENAI_API_KEY) {
-            // Use OpenAI to process the prompt
-            const processedPrompt = await processPromptWithLLM(promptIdea);
-            return NextResponse.json(processedPrompt);
-        } else {
-            console.warn("OpenAI API key not found, falling back to simulation");
-            // Fall back to simulation if API key is not configured
-            const processedPrompt = simulatePromptAnalysis(promptIdea);
-            return NextResponse.json(processedPrompt);
+        // Use the real OpenAI API if the key is available
+        try {
+            const result = await processPromptWithLLM(promptIdea);
+            return NextResponse.json(result);
+        } catch (error) {
+            if (error instanceof Error && error.message.includes('OPENAI_API_KEY')) {
+                return NextResponse.json(
+                    { error: 'OpenAI API key is not configured' },
+                    { status: 500 }
+                );
+            }
+            throw error;
         }
     } catch (error) {
         console.error("Error processing prompt:", error);
