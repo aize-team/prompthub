@@ -33,11 +33,11 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 ## Docker Image
 
-The GitHub Actions workflow builds a Docker image and publishes it to the
-[GitHub Container Registry](https://ghcr.io). Each build is tagged with the
-semantic version from `package.json` as well as `latest`.
+GitHub Actions builds and publishes a Docker image to the
+[GitHub Container Registry](https://ghcr.io). Each image is tagged with the
+version from `package.json` and with `latest`.
 
-You can pull the image using:
+Pull the image using:
 
 ```bash
 docker pull ghcr.io/<your-org>/prompthub:<version>
