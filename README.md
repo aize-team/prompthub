@@ -30,3 +30,15 @@ bun dev
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+## Docker Image
+
+GitHub Actions builds and publishes a Docker image to the
+[GitHub Container Registry](https://ghcr.io). Each image is tagged with the
+version from `package.json` and with `latest`.
+
+Pull the image using:
+
+```bash
+docker pull ghcr.io/<your-org>/prompthub:<version>
+```

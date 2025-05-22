@@ -25,7 +25,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
+      - name: Get version
+        id: version
+        run: echo "version=$(node -p 'require(\"./package.json\").version')" >> $GITHUB_OUTPUT
+
+      - name: Extract metadata (labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -37,7 +41,9 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/prompthub:${{ steps.version.outputs.version }}
+            ghcr.io/${{ github.repository_owner }}/prompthub:latest
           labels: ${{ steps.meta.outputs.labels }}
 
       # - name: Deploy to server (optional)
