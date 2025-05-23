@@ -74,38 +74,43 @@ function ExploreContent() {
    }, [searchFromParams, loading, allTags]); // Depend on loading and allTags
 
   const filteredPrompts = useMemo(() => {
-    const lowerSearchTerm = searchTerm.toLowerCase();
+    const lowerSearchTerm = searchTerm?.toLowerCase() || '';
+    const lowerSelectedTag = selectedTag?.toLowerCase();
+    
     return prompts.filter(prompt => {
-      const matchesSearch = lowerSearchTerm === '' ||
-        prompt.title.toLowerCase().includes(lowerSearchTerm) ||
-        prompt.content.toLowerCase().includes(lowerSearchTerm) ||
-        prompt.category.toLowerCase().includes(lowerSearchTerm) ||
-        prompt.useCases.some(uc => uc.toLowerCase().includes(lowerSearchTerm)) ||
+      // Handle search term matching
+      const matchesSearch = !searchTerm || 
+        (prompt.title?.toLowerCase().includes(lowerSearchTerm) ||
+        prompt.content?.toLowerCase().includes(lowerSearchTerm) ||
+        prompt.category?.toLowerCase().includes(lowerSearchTerm) ||
+        (Array.isArray(prompt.useCases) && prompt.useCases.some(uc => uc?.toLowerCase().includes(lowerSearchTerm))) ||
         (Array.isArray(prompt.tags)
-          ? prompt.tags.some(tag => tag.toLowerCase().includes(lowerSearchTerm))
+          ? prompt.tags.some(tag => tag?.toLowerCase().includes(lowerSearchTerm))
           : typeof prompt.tags === 'string'
-            ? prompt.tags.split(',').map(tag => tag.trim()).filter(Boolean).some(tag => tag.toLowerCase().includes(lowerSearchTerm))
-            : false);
+            ? prompt.tags.split(',').map(tag => tag.trim()).filter(Boolean)
+                .some(tag => tag.toLowerCase().includes(lowerSearchTerm))
+            : false));
 
-      const matchesTag = selectedTag === null || (
+      // Handle tag matching - only apply if we have a selected tag
+      const matchesTag = !selectedTag || !lowerSelectedTag ? true : (
         Array.isArray(prompt.tags)
-          ? prompt.tags.map(t => t.toLowerCase()).includes(selectedTag.toLowerCase())
+          ? prompt.tags.some(tag => tag?.toLowerCase() === lowerSelectedTag)
           : typeof prompt.tags === 'string'
-            ? prompt.tags.split(',').map(t => t.trim().toLowerCase()).includes(selectedTag.toLowerCase())
+            ? prompt.tags.split(',').map(t => t.trim().toLowerCase()).includes(lowerSelectedTag)
             : false
       );
 
       return matchesSearch && matchesTag;
     });
-  }, [searchTerm, selectedTag, prompts]); // Depend on prompts, searchTerm, and selectedTag
+  }, [searchTerm, selectedTag, prompts, searchTerm?.toLowerCase, selectedTag?.toLowerCase]);
 
-  const handleTagClick = useCallback((tag: string) => {
-    if (selectedTag?.toLowerCase() === tag.toLowerCase()) {
+  const handleTagClick = useCallback((tag: string | null) => {
+    if (tag && selectedTag?.toLowerCase() === tag.toLowerCase()) {
       setSelectedTag(null); // Deselect if clicking the same tag
     } else {
       setSelectedTag(tag);
     }
-  }, [selectedTag]); // Depend on selectedTag
+  }, [selectedTag]);
 
   if (loading) {
     return <ExploreLoading />;
@@ -144,23 +149,37 @@ function ExploreContent() {
 
           {/* Tag Filter */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('explore.filter-by-tag')}</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              {t('explore.filter-by-tag')}
+            </label>
             <div className="flex flex-wrap gap-2">
               <button
-                onClick={() => handleTagClick(null as any)} // Use useCallback requires explicit type for null
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${selectedTag === null ? 'bg-purple-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'}`}
+                onClick={() => handleTagClick(null)}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                  !selectedTag
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
               >
                 {t('explore.all-tags')}
               </button>
-              {allTags.map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => handleTagClick(tag)} // Use useCallback
-                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors capitalize ${selectedTag?.toLowerCase() === tag.toLowerCase() ? 'bg-purple-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'}`}
-                >
-                  {tag}
-                </button>
-              ))}
+              {allTags.map((tag) => {
+                if (!tag) return null; // Skip any empty tags
+                const isSelected = selectedTag && selectedTag.toLowerCase() === tag.toLowerCase();
+                return (
+                  <button
+                    key={tag}
+                    onClick={() => handleTagClick(tag)}
+                    className={`px-3 py-1 rounded-full text-xs font-medium transition-colors capitalize ${
+                      isSelected
+                        ? 'bg-purple-600 text-white'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
