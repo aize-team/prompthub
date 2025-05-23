@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
+import { v4 as uuidv4 } from 'uuid';
 
 export const dynamic = "force-dynamic";
 
@@ -49,13 +50,6 @@ export async function POST(request: Request) {
 
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401, headers: { 'Cache-Control': 'no-store' } }
-      );
-    }
-
     const data = await request.json();
 
     // Validate required fields
@@ -66,39 +60,68 @@ export async function POST(request: Request) {
       );
     }
 
-    // Get user details - use email as the unique identifier
-    const userId = session.user.email || '';
-    const authorName = data.author || session.user.name || session.user.email || 'Anonymous User';
-
-    // Add timestamp and user info
-    const promptData = {
-      ...data,
-      createdAt: {
-        seconds: Math.floor(Date.now() / 1000),
-        nanoseconds: (Date.now() % 1000) * 1000000
-      },
-      // Store both display name and user ID
-      author: authorName,
-      user_id: userId,
-      // Include available user info for future reference
-      user_details: {
-        email: session.user.email || null,
-        name: session.user.name || null,
-        image: session.user.image || null
-      },
-      updatedAt: {
-        seconds: Math.floor(Date.now() / 1000),
-        nanoseconds: (Date.now() % 1000) * 1000000
-      }
+    const promptId = uuidv4(); // Generate prompt ID upfront
+    let userId: string;
+    let authorName: string;
+    let isAnonymous: boolean;
+    let anonymousSessionId: string | null = null;
+    let userDetails: any;
+    const now = new Date();
+    const timestamp = {
+        seconds: Math.floor(now.getTime() / 1000),
+        nanoseconds: (now.getTime() % 1000) * 1000000
     };
 
-    // Create document in Firestore
-    const docRef = await db.collection('prompts').add(promptData);
+    if (session?.user?.email) {
+      // Authenticated user
+      userId = session.user.email;
+      authorName = data.author || session.user.name || session.user.email;
+      isAnonymous = false;
+      userDetails = {
+        email: session.user.email,
+        name: session.user.name || null,
+        image: session.user.image || null,
+      };
+    } else {
+      // Anonymous user
+      anonymousSessionId = uuidv4();
+      userId = anonymousSessionId; // Store anonymousSessionId as user_id for the prompt
+      authorName = 'Anonymous User';
+      isAnonymous = true;
+      userDetails = {
+        email: null,
+        name: 'Anonymous User',
+        image: null,
+      };
+    }
 
-    return NextResponse.json({
-      id: docRef.id,
-      ...promptData
-    });
+    const promptData = {
+      id: promptId,
+      title: data.title,
+      content: data.content,
+      description: data.description || '',
+      useCases: data.useCases || [],
+      category: data.category || 'General',
+      tags: data.tags || [],
+      author: authorName,
+      user_id: userId,
+      user_details: userDetails,
+      isAnonymous: isAnonymous,
+      likes: 0,
+      copies: 0,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    };
+
+    // Create document in Firestore with the explicit ID
+    await db.collection('prompts').doc(promptId).set(promptData);
+
+    const responsePayload: any = { ...promptData };
+    if (isAnonymous && anonymousSessionId) {
+      responsePayload.anonymousSessionId = anonymousSessionId;
+    }
+
+    return NextResponse.json(responsePayload);
   } catch (error) {
     console.error('Error creating prompt:', error);
     return NextResponse.json(

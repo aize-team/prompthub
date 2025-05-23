@@ -33,7 +33,8 @@ export async function PUT(request: Request, context: any) {
       );
     }
 
-    const id = context.params?.id;
+    const params = await context.params;
+    const id = params?.id;
     if (!id) {
       return NextResponse.json(
         { error: 'Prompt ID is required' },
@@ -70,9 +71,24 @@ export async function PUT(request: Request, context: any) {
     }
 
     const promptData = promptDoc.data();
-    if (promptData?.user_id && promptData.user_id !== session.user.email) {
+    console.log('Debug - Prompt user_id:', promptData?.user_id);
+    console.log('Debug - Current user email:', session.user.email);
+    
+    // Allow update if:
+    // 1. The user is the original author (user_id matches session email), or
+    // 2. The prompt is anonymous and the user is logged in (we'll update the user_id to the logged-in user)
+    const isAuthor = promptData?.user_id === session.user.email;
+    const isAnonymousPrompt = promptData?.isAnonymous && promptData?.user_id !== session.user.email;
+    
+    if (!isAuthor && !isAnonymousPrompt) {
+      console.log('Debug - Authorization failed: user not authorized to update this prompt');
       return NextResponse.json(
-        { error: 'Not authorized' },
+        { 
+          error: 'Not authorized', 
+          promptUserId: promptData?.user_id, 
+          currentUserEmail: session.user.email,
+          isAnonymous: promptData?.isAnonymous
+        },
         { 
           status: 403,
           headers: { 'Cache-Control': 'no-store' }
@@ -80,14 +96,30 @@ export async function PUT(request: Request, context: any) {
       );
     }
 
-    // Update prompt
-    await promptRef.update({
+    // Prepare update data
+    const updateData: any = {
       ...data,
       updatedAt: {
         seconds: Math.floor(Date.now() / 1000),
         nanoseconds: (Date.now() % 1000) * 1000000
       }
-    });
+    };
+
+    // If this was an anonymous prompt being claimed by a logged-in user
+    if (isAnonymousPrompt) {
+      console.log('Claiming anonymous prompt for user:', session.user.email);
+      updateData.user_id = session.user.email;
+      updateData.isAnonymous = false;
+      updateData.user_details = {
+        email: session.user.email,
+        name: session.user.name || session.user.email,
+        image: session.user.image || null,
+      };
+      updateData.author = session.user.name || session.user.email;
+    }
+
+    // Update prompt
+    await promptRef.update(updateData);
 
     return NextResponse.json(
       { success: true },
