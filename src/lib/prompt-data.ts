@@ -128,3 +128,31 @@ export const getAllTags = async (): Promise<PromptTag[]> => {
     return []; // Return empty array on failure
   }
 };
+
+// Function to fetch and seed prompts (used for admin operations)
+export const fetchAndSeedPrompts = async (): Promise<void> => {
+  try {
+    // Fetch all existing prompts
+    const prompts = await fetchPrompts();
+
+    // For each prompt, send a POST request to create/update it in the database
+    for (const prompt of prompts) {
+      const response = await fetch('/api/prompts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(prompt),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to seed prompt ${prompt.id}. Status: ${response.status}`);
+      }
+    }
+
+    console.log(`Successfully seeded ${prompts.length} prompts to the database`);
+  } catch (error) {
+    console.error('Error in fetchAndSeedPrompts:', error);
+    throw error; // Re-throw to allow the calling code to handle the error
+  }
+};

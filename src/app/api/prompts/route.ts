@@ -1,12 +1,23 @@
-import { NextResponse } from 'next/server';
-import { db } from '@/lib/firebase';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth';
-import { v4 as uuidv4 } from 'uuid';
+import {NextResponse} from 'next/server';
+import {db} from '@/lib/firebase';
+import {getServerSession} from 'next-auth/next';
+import {authOptions} from '@/lib/auth';
+import {v4 as uuidv4} from 'uuid';
+import {CollectionReference, Query} from 'firebase-admin/firestore';
 
 export const dynamic = "force-dynamic";
 
 const ITEMS_PER_PAGE = 12; // Number of items per page
+
+// Define interface for prompt document data
+interface PromptDocument {
+  id: string;
+  createdAt: any; // Use more specific type if available (e.g., FirebaseFirestore.Timestamp)
+  likes?: number;
+
+  // Add other fields that exist in your document
+  [key: string]: any; // Allow other properties
+}
 
 export async function GET(request: Request) {
   // Return empty array if Firebase is not initialized (build time)
@@ -26,7 +37,7 @@ export async function GET(request: Request) {
     const category = searchParams.get('category') || '';
     const sortBy = searchParams.get('sortBy') || 'latest';
 
-    let query: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> = db.collection('prompts');
+    let query: CollectionReference | Query = db.collection('prompts');
 
     // Apply filters
     if (search) {
@@ -36,7 +47,13 @@ export async function GET(request: Request) {
     }
 
     if (tag) {
-      query = query.where('tags', 'array-contains', tag);
+      // Handle both array and string formats for tags
+      // First, get all documents where tags is an array and contains the tag (case-insensitive)
+      const tagLower = tag.toLowerCase();
+
+      // We need to handle both formats, so we'll fetch all documents and filter in memory
+      // This is a workaround for Firestore's limitations with mixed data types
+      // In a production app, you'd want to standardize your data format
     }
 
     if (category) {
@@ -46,14 +63,36 @@ export async function GET(request: Request) {
     // Workaround for missing composite index - fetch all matching documents
     // NOTE: This approach works for small to medium collections but is not efficient for very large collections
     const allMatchingDocs = await query.get();
-    const total = allMatchingDocs.size;
+
+    // If tag filtering is needed, do it in memory for mixed tag formats
+    let filteredDocs = allMatchingDocs.docs;
+    if (tag) {
+      const tagLower = tag.toLowerCase();
+      filteredDocs = filteredDocs.filter(doc => {
+        const data = doc.data();
+        // Handle array format
+        if (Array.isArray(data.tags)) {
+          return data.tags.some(t => t.toLowerCase() === tagLower);
+        }
+        // Handle string format
+        else if (typeof data.tags === 'string') {
+          return data.tags
+              .split(',')
+              .map(t => t.trim().toLowerCase())
+              .includes(tagLower);
+        }
+        return false;
+      });
+    }
+
+    const total = filteredDocs.length;
     const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
     
     // Convert to array for manual sorting and pagination
-    let items = allMatchingDocs.docs.map(doc => ({
+    let items = filteredDocs.map(doc => ({
       id: doc.id,
       ...doc.data()
-    }));
+    })) as PromptDocument[];
     
     // Apply sorting in memory
     switch (sortBy) {

@@ -1,9 +1,9 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
-import { PromptDetail } from '@/lib/prompt-data';
-import { useLanguage } from '@/context/LanguageContext';
-import { useState } from 'react'; // Import useState for button interaction (future)
+import {Badge} from '@/components/ui/badge';
+import {PromptDetail} from '@/lib/prompt-data';
+import {useLanguage} from '@/context/LanguageContext';
+import {useState} from 'react'; // Import useState for button interaction (future)
 
 export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }) {
   const { t, direction } = useLanguage();
@@ -197,7 +197,7 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
                       {prompt.useCases.map((useCase, index) => (
                         <li key={index} className="flex items-start">
                           <span className={`text-blue-600 dark:text-blue-400 ${direction === 'rtl' ? 'ml-2' : 'mr-2'}`}>&bull;</span>
-                          <span className="text-gray-700 dark:text-gray-300">{t(`prompt.${useCase.toLowerCase().replace(/\s+/g, '-')}`) || useCase}</span>
+                          <span className="text-gray-700 dark:text-gray-300 text-transform: capitalize">{useCase}</span>
                         </li>
                       ))}
                     </ul>

@@ -1,20 +1,14 @@
 'use client';
 
-import { useState, useEffect, Suspense, useCallback, useMemo } from 'react';
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import {
-  fetchPaginatedPrompts,
-  getAllTags,
-  PromptDetail,
-  PromptTag,
-  PaginatedResponse
-} from '@/lib/prompt-data';
+import {Suspense, useCallback, useEffect, useState} from 'react';
+import {usePathname, useRouter, useSearchParams} from 'next/navigation';
+import {fetchPaginatedPrompts, getAllTags, PaginatedResponse, PromptDetail, PromptTag} from '@/lib/prompt-data';
 import PromptCard from '@/components/PromptCard';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useLanguage } from '@/context/LanguageContext';
-import { Skeleton } from '@/components/ui/skeleton';
+import {Input} from '@/components/ui/input';
+import {Button} from '@/components/ui/button';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
+import {useLanguage} from '@/context/LanguageContext';
+import {Skeleton} from '@/components/ui/skeleton';
 
 // Create a client component that uses useSearchParams
 function ExploreContent() {
@@ -246,7 +240,7 @@ function ExploreContent() {
             </Button>
           ))}
         </div>
-      </div>
+
 
       {
         loading && (
@@ -360,6 +354,7 @@ function ExploreContent() {
           </>
         )
       }
+      </div>
     </>
   );
 }
