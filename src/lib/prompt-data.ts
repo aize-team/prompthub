@@ -13,6 +13,9 @@ export type PromptDetail = {
   author: string;
   likes: number;
   copies: number;
+  createdAt?: string | FirebaseFirestore.Timestamp;
+  updatedAt?: string | FirebaseFirestore.Timestamp;
+  searchTerms?: string[];
   // Additional fields for the contribute page
   model?: string;
   promptType?: string;
@@ -23,31 +26,68 @@ export type PromptDetail = {
   isAnonymous?: boolean;
 };
 
-// Function to fetch all prompts from the data file
+export type PaginatedResponse<T> = {
+  items: T[];
+  total: number;
+  page: number;
+  totalPages: number;
+  itemsPerPage: number;
+};
+
+// Function to fetch paginated prompts with filters
+export const fetchPaginatedPrompts = async ({
+  page = 1,
+  search = '',
+  tag = '',
+  category = '',
+  sortBy = 'latest',
+}: {
+  page?: number;
+  search?: string;
+  tag?: string;
+  category?: string;
+  sortBy?: 'latest' | 'popular';
+} = {}): Promise<PaginatedResponse<PromptDetail>> => {
+  try {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      ...(search && { search }),
+      ...(tag && { tag }),
+      ...(category && { category }),
+      sortBy,
+    });
+
+    const response = await fetch(`/api/prompts?${params.toString()}`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch prompts. Status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching paginated prompts:', error);
+    return {
+      items: [],
+      total: 0,
+      page: 1,
+      totalPages: 0,
+      itemsPerPage: 12,
+    };
+  }
+};
+
+// Function to fetch all prompts (kept for backward compatibility)
 export const fetchPrompts = async (): Promise<PromptDetail[]> => {
   try {
-    const response = await fetch('/data/prompts.json'); // Fetch from JSON file
+    const response = await fetch('/api/prompts');
     if (!response.ok) {
-      // If fetching from the data file fails, fallback to API (if available)
-      // This part assumes you might still have the /api/prompts route for seeding/other purposes
-      // If not, you might want to handle this error differently or remove the API fallback
-      try {
-        const apiResponse = await fetch('/api/prompts');
-        if (!apiResponse.ok) {
-          throw new Error(`Failed to fetch prompts from data file and API. Status: ${response.status || apiResponse.status}`);
-        }
-        return await apiResponse.json();
-      } catch (apiError) {
-        console.error('Error fetching prompts from API fallback:', apiError);
-        throw new Error(`Failed to fetch prompts. Original status: ${response.status}. API fallback failed.`);
-      }
+      throw new Error(`Failed to fetch prompts. Status: ${response.status}`);
     }
-    const prompts: PromptDetail[] = await response.json();
-    return prompts;
+    const data = await response.json();
+    return data.items || [];
   } catch (error) {
     console.error('Error fetching prompts:', error);
-    // In a real app, you might want a more robust error handling or a true database fallback
-    return []; // Return empty array on failure
+    return [];
   }
 };
 

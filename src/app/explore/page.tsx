@@ -1,51 +1,108 @@
-'use client'; // This page needs client-side interactivity for filtering
+'use client';
 
-import { useState, useMemo, useEffect, Suspense, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { fetchPrompts, getAllTags, PromptDetail, PromptTag } from '@/lib/prompt-data'; // Import fetch functions
+import { useState, useEffect, Suspense, useCallback, useMemo } from 'react';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import {
+  fetchPaginatedPrompts,
+  getAllTags,
+  PromptDetail,
+  PromptTag,
+  PaginatedResponse
+} from '@/lib/prompt-data';
 import PromptCard from '@/components/PromptCard';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useLanguage } from '@/context/LanguageContext';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Create a client component that uses useSearchParams
 function ExploreContent() {
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const searchFromParams = searchParams.get('search') || '';
   const { t, direction } = useLanguage();
 
-  const [prompts, setPrompts] = useState<PromptDetail[]>([]);
+  // Get query params
+  const searchQuery = searchParams.get('search') || '';
+  const tagQuery = searchParams.get('tag') || '';
+  const categoryQuery = searchParams.get('category') || '';
+  const sortByQuery = searchParams.get('sortBy') || 'latest';
+  const pageQuery = parseInt(searchParams.get('page') || '1');
+
+  // State for filters and pagination
+  const [searchTerm, setSearchTerm] = useState(searchQuery);
+  const [selectedTag, setSelectedTag] = useState<string | null>(tagQuery);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(categoryQuery);
+  const [sortBy, setSortBy] = useState<'latest' | 'popular'>(sortByQuery as 'latest' | 'popular');
+  const [currentPage, setCurrentPage] = useState(pageQuery);
+
+  // Data state
+  const [data, setData] = useState<PaginatedResponse<PromptDetail>>({
+    items: [],
+    total: 0,
+    page: 1,
+    totalPages: 0,
+    itemsPerPage: 12
+  });
   const [allTags, setAllTags] = useState<PromptTag[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [searchTerm, setSearchTerm] = useState(searchFromParams);
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  // Update URL with current filters
+  const updateUrl = useCallback((updates: Record<string, string | number | null>) => {
+    const params = new URLSearchParams(searchParams.toString());
 
-  // Fetch data on component mount
+    // Apply updates
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === null || value === '') {
+        params.delete(key);
+      } else {
+        params.set(key, String(value));
+      }
+    });
+
+    // Reset to page 1 when filters change (except when explicitly changing page)
+    if (!updates.hasOwnProperty('page') && Object.keys(updates).length > 0) {
+      params.set('page', '1');
+    }
+
+    // Update URL
+    router.push(`${pathname}?${params.toString()}`);
+  }, [pathname, router, searchParams]);
+
+  // Fetch data when filters change
   useEffect(() => {
-    const getData = async () => {
+    const fetchData = async () => {
       setLoading(true);
       setError(null);
+
       try {
-        const fetchedPrompts = await fetchPrompts();
-        setPrompts(fetchedPrompts);
+        // Fetch prompts with current filters
+        const result = await fetchPaginatedPrompts({
+          page: currentPage,
+          search: searchTerm,
+          tag: selectedTag || '',
+          category: selectedCategory || '',
+          sortBy,
+        });
 
-        const fetchedTags = await getAllTags();
-        setAllTags(fetchedTags);
+        setData(result);
 
-        // Update search term and selected tag based on URL after data is fetched
-        setSearchTerm(searchFromParams);
-        if (searchFromParams) {
-          const matchingTag = fetchedTags.find(
-            tag => tag.toLowerCase() === searchFromParams.toLowerCase()
-          );
-          if (matchingTag) {
-            setSelectedTag(matchingTag);
-          } else {
-            setSelectedTag(null);
+        // Fetch tags if not already loaded
+        if (allTags.length === 0) {
+          const fetchedTags = await getAllTags();
+          setAllTags(fetchedTags);
+
+          // Extract unique categories from the data for the filter dropdown
+          if (result.items.length > 0) {
+            const uniqueCategories = Array.from(
+              new Set(result.items.map(item => item.category).filter(Boolean))
+            );
+            setCategories(uniqueCategories);
           }
         }
-
       } catch (err) {
         console.error('Failed to fetch data:', err);
         setError('Failed to load prompts. Please try again later.');
@@ -53,156 +110,257 @@ function ExploreContent() {
         setLoading(false);
       }
     };
-    getData();
-  }, [searchFromParams]); // Refetch if searchFromParams changes
 
-  // Update search term when URL parameters change if data is already loaded
-   useEffect(() => {
-    if (!loading) { // Only update if not currently loading
-      setSearchTerm(searchFromParams);
-       if (searchFromParams) {
-          const matchingTag = allTags.find(
-            tag => tag.toLowerCase() === searchFromParams.toLowerCase()
-          );
-          if (matchingTag) {
-            setSelectedTag(matchingTag);
-          } else {
-            setSelectedTag(null);
-          }
-        }
-    }
-   }, [searchFromParams, loading, allTags]); // Depend on loading and allTags
+    fetchData();
+  }, [currentPage, searchTerm, selectedTag, selectedCategory, sortBy, allTags.length]);
 
-  const filteredPrompts = useMemo(() => {
-    const lowerSearchTerm = searchTerm?.toLowerCase() || '';
-    const lowerSelectedTag = selectedTag?.toLowerCase();
-    
-    return prompts.filter(prompt => {
-      // Handle search term matching
-      const matchesSearch = !searchTerm || 
-        (prompt.title?.toLowerCase().includes(lowerSearchTerm) ||
-        prompt.content?.toLowerCase().includes(lowerSearchTerm) ||
-        prompt.category?.toLowerCase().includes(lowerSearchTerm) ||
-        (Array.isArray(prompt.useCases) && prompt.useCases.some(uc => uc?.toLowerCase().includes(lowerSearchTerm))) ||
-        (Array.isArray(prompt.tags)
-          ? prompt.tags.some(tag => tag?.toLowerCase().includes(lowerSearchTerm))
-          : typeof prompt.tags === 'string'
-            ? prompt.tags.split(',').map(tag => tag.trim()).filter(Boolean)
-                .some(tag => tag.toLowerCase().includes(lowerSearchTerm))
-            : false));
+  // Handle search submit
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateUrl({ search: searchTerm });
+  };
 
-      // Handle tag matching - only apply if we have a selected tag
-      const matchesTag = !selectedTag || !lowerSelectedTag ? true : (
-        Array.isArray(prompt.tags)
-          ? prompt.tags.some(tag => tag?.toLowerCase() === lowerSelectedTag)
-          : typeof prompt.tags === 'string'
-            ? prompt.tags.split(',').map(t => t.trim().toLowerCase()).includes(lowerSelectedTag)
-            : false
-      );
+  // Handle tag click
+  const handleTagClick = (tag: string | null) => {
+    const newTag = selectedTag === tag ? null : tag;
+    setSelectedTag(newTag);
+    updateUrl({ tag: newTag });
+  };
 
-      return matchesSearch && matchesTag;
-    });
-  }, [searchTerm, selectedTag, prompts, searchTerm?.toLowerCase, selectedTag?.toLowerCase]);
-
-  const handleTagClick = useCallback((tag: string | null) => {
-    if (tag && selectedTag?.toLowerCase() === tag.toLowerCase()) {
-      setSelectedTag(null); // Deselect if clicking the same tag
+  // Handle category change
+  const handleCategoryChange = (value: string) => {
+    if (value === "__all__") {
+      setSelectedCategory(null);
+      updateUrl({ category: null });
     } else {
-      setSelectedTag(tag);
+      setSelectedCategory(value);
+      updateUrl({ category: value });
     }
-  }, [selectedTag]);
+  };
 
-  if (loading) {
-    return <ExploreLoading />;
-  }
+  // Handle sort change
+  const handleSortChange = (value: 'latest' | 'popular') => {
+    setSortBy(value);
+    updateUrl({ sortBy: value });
+  };
 
-  if (error) {
-    return (
-      <div className="container mx-auto p-6 min-h-screen text-center text-red-500">
-        <h1 className="text-4xl font-bold mb-8">{t('explore.title') || 'Explore Prompts'}</h1>
-        <p>{error}</p>
-      </div>
-    );
-  }
+  // Handle page change
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    updateUrl({ page: newPage });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedTag(null);
+    setSelectedCategory(null);
+    setSortBy('latest');
+    setCurrentPage(1);
+    updateUrl({ search: null, tag: null, category: null, sortBy: null, page: null });
+  };
+
+  // Check if any filters are active
+  const hasActiveFilters = searchTerm || selectedTag || selectedCategory || sortBy !== 'latest';
+
+  // Server returns already filtered/paginated data; no need for local filtering
+  // If further local filtering is required, add here. Otherwise, use data.items directly.
 
   return (
-    <div className={`container mx-auto p-6 min-h-screen ${direction === 'rtl' ? 'rtl' : ''}`}>
-      <h1 className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
-        {t('explore.title') || 'Explore Prompts'}
-      </h1>
-
-      {/* Search and Filter Section */}
-      <div className="mb-10 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-          {/* Search Input */}
-          <div className="md:col-span-1">
-            <label htmlFor="search" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('explore.search-label')}</label>
-            <Input
-              id="search"
-              type="text"
-              placeholder={t('explore.search-placeholder')}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full"
-            />
-          </div>
-
-          {/* Tag Filter */}
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              {t('explore.filter-by-tag')}
-            </label>
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => handleTagClick(null)}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  !selectedTag
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                }`}
-              >
-                {t('explore.all-tags')}
-              </button>
-              {allTags.map((tag) => {
-                if (!tag) return null; // Skip any empty tags
-                const isSelected = selectedTag && selectedTag.toLowerCase() === tag.toLowerCase();
-                return (
-                  <button
-                    key={tag}
-                    onClick={() => handleTagClick(tag)}
-                    className={`px-3 py-1 rounded-full text-xs font-medium transition-colors capitalize ${
-                      isSelected
-                        ? 'bg-purple-600 text-white'
-                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                    }`}
-                  >
-                    {tag}
-                  </button>
-                );
-              })}
+    <>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-6">{t('explore.title') || 'Explore Prompts'}</h1>
+        <div className="space-y-4 mb-8">
+          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Input
+                type="text"
+                placeholder={t('searchPrompts') || 'Search prompts...'}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10"
+              />
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg className="h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
             </div>
-          </div>
+
+            <div className="flex gap-2">
+              <Select value={sortBy} onValueChange={handleSortChange}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="latest">Latest</SelectItem>
+                  <SelectItem value="popular">Most Popular</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {categories.length > 0 && (
+                <Select value={selectedCategory ?? "__all__"} onValueChange={handleCategoryChange}>
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__all__">All Categories</SelectItem>
+                    {categories.map(category => (
+                      <SelectItem key={category} value={category}>{category}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+
+              <Button type="submit">Search</Button>
+
+              {hasActiveFilters && (
+                <Button variant="outline" onClick={clearFilters}>
+                  Clear Filters
+                </Button>
+              )}
+            </div>
+          </form>
+        </div>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant={selectedTag === null ? "default" : "outline"}
+            size="sm"
+            onClick={() => handleTagClick(null)}
+            className="rounded-full"
+          >
+            All
+          </Button>
+          {allTags.map((tag) => (
+            <Button
+              key={tag}
+              variant={selectedTag === tag ? "default" : "outline"}
+              size="sm"
+              onClick={() => handleTagClick(tag)}
+              className="rounded-full"
+            >
+              {tag}
+            </Button>
+          ))}
         </div>
       </div>
 
-      {/* Prompt Grid */}
-      {filteredPrompts.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredPrompts.map((prompt) => (
-            <PromptCard key={prompt.id} prompt={prompt} />
-          ))}
-        </div>
-      ) : (searchTerm || selectedTag !== null) && !loading ? (
-        <div className="text-center py-12">
-          <p className="text-xl text-gray-600 dark:text-gray-400">{t('explore.no-prompts')}</p>
-          {(searchTerm || selectedTag !== null) && <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">{t('explore.broaden-search')}</p>}
-        </div>
-      ) : !loading && (
-         <div className="text-center py-12">
-          <p className="text-xl text-gray-600 dark:text-gray-400">{t('explore.no-prompts')}</p>
-        </div>
-      )}
-    </div>
+      {
+        loading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="space-y-3">
+                <Skeleton className="h-[180px] w-full rounded-lg" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )
+      }
+
+      {/* Error State */}
+      {
+        !loading && error && (
+          <div className="text-center py-12">
+            <p className="text-destructive mb-4">{error}</p>
+            <Button onClick={() => window.location.reload()}>Try Again</Button>
+          </div>
+        )
+      }
+
+      {/* Empty State */}
+      {
+        !loading && !error && data.items.length === 0 && (
+          <div className="text-center py-12">
+            <h3 className="text-lg font-medium mb-2">No prompts found</h3>
+            <p className="text-muted-foreground mb-4">
+              {hasActiveFilters
+                ? 'Try adjusting your search or filters to find what you\'re looking for.'
+                : 'There are no prompts available at the moment.'}
+            </p>
+            {hasActiveFilters && (
+              <Button onClick={clearFilters}>Clear Filters</Button>
+            )}
+          </div>
+        )
+      }
+
+      {/* Prompts Grid */}
+      {
+        !loading && !error && data.items.length > 0 && (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              {data.items.map((prompt) => (
+                <PromptCard key={prompt.id} prompt={prompt} />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {data.totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-8">
+                <Button
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </Button>
+
+                {Array.from({ length: Math.min(5, data.totalPages) }, (_, i) => {
+                  let pageNumber = i + 1;
+
+                  // Handle pagination for many pages
+                  if (data.totalPages > 5) {
+                    if (currentPage <= 3) {
+                      // First pages
+                      if (i === 3) return <span key="ellipsis1">...</span>;
+                      if (i === 4) pageNumber = data.totalPages;
+                    } else if (currentPage >= data.totalPages - 2) {
+                      // Last pages
+                      if (i === 1) return <span key="ellipsis2">...</span>;
+                      if (i === 0) pageNumber = 1;
+                      if (i > 1) pageNumber = data.totalPages - (4 - i);
+                    } else {
+                      // Middle pages
+                      if (i === 0) pageNumber = 1;
+                      if (i === 1) return <span key="ellipsis3">...</span>;
+                      if (i === 2) pageNumber = currentPage;
+                      if (i === 3) pageNumber = currentPage + 1;
+                      if (i === 4) return <span key="ellipsis4">...</span>;
+                    }
+                  }
+
+                  return (
+                    <Button
+                      key={pageNumber}
+                      variant={currentPage === pageNumber ? "default" : "outline"}
+                      onClick={() => handlePageChange(pageNumber)}
+                      className="w-10 h-10 p-0"
+                    >
+                      {pageNumber}
+                    </Button>
+                  );
+                })}
+
+                <Button
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === data.totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            )}
+          </>
+        )
+      }
+    </>
   );
 }
 
@@ -212,9 +370,7 @@ function ExploreLoading() {
 
   return (
     <div className="container mx-auto p-6 min-h-screen">
-      <h1 className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
-        {t('explore.title') || 'Explore Prompts'}
-      </h1>
+      <h1 className="text-4xl font-bold mb-8">{t('explore.title') || 'Explore Prompts'}</h1>
       <div className="flex justify-center items-center py-20">
         <div className="animate-pulse flex flex-col items-center">
           <div className="h-12 w-12 bg-blue-400 dark:bg-blue-600 rounded-full mb-4"></div>
@@ -222,7 +378,7 @@ function ExploreLoading() {
           <div className="h-3 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 
