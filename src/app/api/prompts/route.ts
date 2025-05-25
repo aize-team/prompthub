@@ -33,10 +33,14 @@ export async function GET(request: Request) {
     let query: CollectionReference | Query = db.collection('prompts');
 
     // Apply filters
+    // We'll fetch all documents and filter in memory for search
+    // This allows us to search across multiple fields
+    let performInMemorySearch = false;
+    let searchLower = '';
+    
     if (search) {
-      const searchLower = search.toLowerCase();
-      // This is a simple search - for more advanced search, consider using a search service like Algolia
-      query = query.where('searchTerms', 'array-contains', searchLower);
+      performInMemorySearch = true;
+      searchLower = search.toLowerCase();
     }
 
     if (tag) {
@@ -53,12 +57,14 @@ export async function GET(request: Request) {
       query = query.where('category', '==', category);
     }
 
-    // Workaround for missing composite index - fetch all matching documents
+    // Fetch all matching documents based on the current query
     // NOTE: This approach works for small to medium collections but is not efficient for very large collections
     const allMatchingDocs = await query.get();
 
-    // If tag filtering is needed, do it in memory for mixed tag formats
+    // Apply in-memory filtering for both search and tags
     let filteredDocs = allMatchingDocs.docs;
+    
+    // Filter by tag if needed
     if (tag) {
       const tagLower = tag.toLowerCase();
       filteredDocs = filteredDocs.filter(doc => {
@@ -75,6 +81,29 @@ export async function GET(request: Request) {
               .includes(tagLower);
         }
         return false;
+      });
+    }
+    
+    // Apply search filter if needed
+    if (performInMemorySearch) {
+      filteredDocs = filteredDocs.filter(doc => {
+        const data = doc.data();
+        // Search across multiple fields
+        const titleMatch = data.title?.toLowerCase().includes(searchLower) || false;
+        const contentMatch = data.content?.toLowerCase().includes(searchLower) || false;
+        const descriptionMatch = data.description?.toLowerCase().includes(searchLower) || false;
+        const categoryMatch = data.category?.toLowerCase().includes(searchLower) || false;
+        
+        // Search in tags
+        let tagsMatch = false;
+        if (Array.isArray(data.tags)) {
+          tagsMatch = data.tags.some(t => t.toLowerCase().includes(searchLower));
+        } else if (typeof data.tags === 'string') {
+          tagsMatch = data.tags.toLowerCase().includes(searchLower);
+        }
+        
+        // Return true if any field matches
+        return titleMatch || contentMatch || descriptionMatch || categoryMatch || tagsMatch;
       });
     }
 

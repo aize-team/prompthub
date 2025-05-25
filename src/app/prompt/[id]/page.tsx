@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import { getPromptById, PromptDetail } from '@/lib/prompt-data'; // Import async fetch function
 import { notFound } from 'next/navigation';
 import PromptDetailContent from '@/components/PromptDetailContent';
@@ -28,8 +29,9 @@ function PromptDetailLoading() {
 }
 
 // Main export function
-export default function PromptDetailPage({ params }: { params: { id: string } }) {
-  const id = params.id;
+export default function PromptDetailPage() {
+  const params = useParams<{ id: string }>();
+  const id = params?.id;
   const { t } = useLanguage();
 
   const [prompt, setPrompt] = useState<PromptDetail | undefined>(undefined);
