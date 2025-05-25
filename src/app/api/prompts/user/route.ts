@@ -2,22 +2,11 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
+import type { Prompt } from '@/lib/prompt-schema';
 
 export const dynamic = "force-dynamic";
 
 // Define interface for prompt data
-interface Prompt {
-    id: string;
-    author?: string;
-    user_id?: string;
-    title?: string;
-    content?: string;
-    createdAt?: {
-        seconds: number;
-        nanoseconds: number;
-    };
-    [key: string]: any; // For any other fields
-}
 
 export async function GET() {
     try {

@@ -4,20 +4,13 @@ import {getServerSession} from 'next-auth/next';
 import {authOptions} from '@/lib/auth';
 import {v4 as uuidv4} from 'uuid';
 import {CollectionReference, Query} from 'firebase-admin/firestore';
+import type { Prompt } from '@/lib/prompt-schema';
+import { validatePrompt } from '@/lib/prompt-schema';
 
 export const dynamic = "force-dynamic";
 
 const ITEMS_PER_PAGE = 12; // Number of items per page
 
-// Define interface for prompt document data
-interface PromptDocument {
-  id: string;
-  createdAt: any; // Use more specific type if available (e.g., FirebaseFirestore.Timestamp)
-  likes?: number;
-
-  // Add other fields that exist in your document
-  [key: string]: any; // Allow other properties
-}
 
 export async function GET(request: Request) {
   // Return empty array if Firebase is not initialized (build time)
@@ -92,7 +85,7 @@ export async function GET(request: Request) {
     let items = filteredDocs.map(doc => ({
       id: doc.id,
       ...doc.data()
-    })) as PromptDocument[];
+    })) as Prompt[];
     
     // Apply sorting in memory
     switch (sortBy) {
@@ -146,8 +139,7 @@ export async function POST(request: Request) {
     const session = await getServerSession(authOptions);
     const data = await request.json();
 
-    // Validate required fields
-    if (!data.title || !data.content) {
+    if (!validatePrompt(data)) {
       return NextResponse.json(
         { error: 'Title and content are required' },
         { status: 400 }

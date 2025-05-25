@@ -121,6 +121,21 @@ export default function PromptActions({
     }
   };
 
+  const handleShareJson = () => {
+    if (!promptId) {
+      showNotification('error', t('prompt.save-before-share'));
+      return;
+    }
+
+    const url = `${window.location.origin}/api/prompt/${promptId}/share`;
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        showNotification('success', t('prompt.link-copied'));
+      })
+      .catch(console.error);
+  };
+
   const buttonClass = "flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500";
   const iconClass = 'h-4 w-4';
 
@@ -170,6 +185,18 @@ export default function PromptActions({
           >
             <ShareIcon className={iconClass} />
             <span className="hidden sm:inline">{t('prompt.share')}</span>
+          </button>
+        )}
+
+        {promptId && (
+          <button
+            type="button"
+            onClick={handleShareJson}
+            className={buttonClass}
+            aria-label={t('prompt.share-json')}
+          >
+            <ShareIcon className={iconClass} />
+            <span className="hidden sm:inline">{t('prompt.share-json')}</span>
           </button>
         )}
       </div>

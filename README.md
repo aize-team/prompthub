@@ -42,3 +42,13 @@ Pull the image using:
 ```bash
 docker pull ghcr.io/<your-org>/prompthub:<version>
 ```
+
+### Share a Prompt
+
+Each saved prompt provides a **Share JSON** option. This copies a link like
+`https://<host>/api/prompt/<id>/share` that returns the prompt data in JSON
+format.
+
+## License
+
+PromptHub is released under the [MIT License](LICENSE).

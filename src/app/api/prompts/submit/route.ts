@@ -3,6 +3,7 @@ import { db } from '@/lib/firebase';
 import { getServerSession } from 'next-auth/next';
 import { v4 as uuidv4 } from 'uuid';
 import { authOptions } from '@/lib/auth';
+import { validatePrompt } from '@/lib/prompt-schema';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,12 +15,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Parse request body
-    const data = await request.json();
+  const data = await request.json();
 
-    // Validate required fields
-    if (!data.title || !data.content) {
-      return NextResponse.json({ error: 'Title and content are required' }, { status: 400 });
-    }
+  if (!validatePrompt(data)) {
+    return NextResponse.json({ error: 'Title and content are required' }, { status: 400 });
+  }
 
     // Create a new prompt document
     const promptData = {

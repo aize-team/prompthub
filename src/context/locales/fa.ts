@@ -63,6 +63,7 @@ const fa = {
   'prompt.exported': 'پرامپت با موفقیت ذخیره شد!',
   'prompt.export-failed': 'خطا در ذخیره‌سازی پرامپت',
   'prompt.share': 'اشتراک‌گذاری',
+  'prompt.share-json': 'اشتراک JSON',
   'prompt.link-copied': 'لینک در کلیپ‌بورد کپی شد!',
   'prompt.save-before-share': 'لطفاً قبل از اشتراک‌گذاری، پرامپت را ذخیره کنید',
   'prompt.likes': 'پسند',

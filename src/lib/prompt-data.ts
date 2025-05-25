@@ -1,30 +1,12 @@
-// Define the types for prompts and their details
+// Prompt type definitions shared across the app
 export type PromptTag = string;
 export type PromptCategory = string;
 export type PromptUseCase = string;
 
-export type PromptDetail = {
-  id: string;
-  title: string;
-  content: string;
-  useCases: PromptUseCase[];
-  category: PromptCategory;
-  tags: PromptTag[] | string;
-  author: string;
-  likes: number;
-  copies: number;
-  createdAt?: string | FirebaseFirestore.Timestamp;
-  updatedAt?: string | FirebaseFirestore.Timestamp;
-  searchTerms?: string[];
-  // Additional fields for the contribute page
-  model?: string;
-  promptType?: string;
-  complexityLevel?: string;
-  example?: string;
-  tips?: string;
-  expectedResponse?: string;
-  isAnonymous?: boolean;
-};
+import type { Prompt } from './prompt-schema';
+
+// Backwards compatibility for existing imports
+export type PromptDetail = Prompt;
 
 export type PaginatedResponse<T> = {
   items: T[];

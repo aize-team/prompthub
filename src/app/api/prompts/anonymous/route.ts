@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
 import { v4 as uuidv4 } from 'uuid';
+import { validatePrompt } from '@/lib/prompt-schema';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,7 +19,7 @@ export async function POST(request: Request) {
     const data = await request.json();
 
     // Validate required fields
-    if (!data.title || !data.content) {
+    if (!validatePrompt(data)) {
       return NextResponse.json(
         { error: 'Title and content are required' },
         { status: 400 }

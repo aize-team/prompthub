@@ -63,6 +63,7 @@ const en = {
   'prompt.exported': 'Prompt exported successfully!',
   'prompt.export-failed': 'Failed to export prompt',
   'prompt.share': 'Share',
+  'prompt.share-json': 'Share JSON',
   'prompt.link-copied': 'Link copied to clipboard!',
   'prompt.save-before-share': 'Please save the prompt before sharing',
   'prompt.likes': 'Likes',
