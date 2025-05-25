@@ -92,7 +92,7 @@ function ExploreContent() {
           // Extract unique categories from the data for the filter dropdown
           if (result.items.length > 0) {
             const uniqueCategories = Array.from(
-              new Set(result.items.map(item => item.category).filter(Boolean))
+              new Set(result.items.map(item => item.category).filter((category): category is string => Boolean(category)))
             );
             setCategories(uniqueCategories);
           }

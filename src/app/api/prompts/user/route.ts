@@ -42,10 +42,13 @@ export async function GET() {
                 .get();
         }
 
-        let prompts: Prompt[] = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
+        let prompts = snapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                ...data
+            } as Prompt;
+        });
 
         // Sort by createdAt in memory instead of in the query
         prompts = prompts.sort((a, b) => {

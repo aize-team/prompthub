@@ -175,7 +175,7 @@ export function usePromptData() {
 
         // Apply sorting if specified
         if (sortBy === 'popular') {
-          sortedPrompts.sort((a, b) => b.likes - a.likes);
+          sortedPrompts.sort((a, b) => (b.likes || 0) - (a.likes || 0));
         } else if (sortBy === 'recent') {
           // Assuming we'd have a date field, for now just randomize
           sortedPrompts.sort(() => 0.5 - Math.random());

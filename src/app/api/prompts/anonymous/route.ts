@@ -48,10 +48,7 @@ export async function POST(request: Request) {
     // Create document in Firestore
     await db.collection('prompts').doc(promptData.id).set(promptData);
 
-    return NextResponse.json({
-      id: promptData.id,
-      ...promptData
-    });
+    return NextResponse.json(promptData);
   } catch (error) {
     console.error('Error creating anonymous prompt:', error);
     return NextResponse.json(
