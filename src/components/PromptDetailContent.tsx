@@ -4,6 +4,7 @@ import {Badge} from '@/components/ui/badge';
 import {PromptDetail} from '@/lib/prompt-data';
 import {useLanguage} from '@/context/LanguageContext';
 import {useState} from 'react'; // Import useState for button interaction (future)
+import ShareButton from '@/components/ui/ShareButton';
 
 export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }) {
   const { t, direction } = useLanguage();
@@ -163,17 +164,28 @@ export default function PromptDetailContent({ prompt }: { prompt: PromptDetail }
                 </div>
               </div>
 
-              {/* Edit and Contribute Button - Transfers prompt details to contribute page */}
-              <a
-                href={`/contribute/edit/${prompt.id}`}
-                className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-5 py-3 rounded-lg transition-all duration-300 font-medium shadow-md hover:shadow-xl transform hover:scale-105 border border-transparent"
-                aria-label="Edit and contribute to this prompt"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-                {t('generate.edit-and-contribute')}
-              </a>
+              <div className="flex items-center gap-3">
+                {/* Share Button */}
+                <ShareButton 
+                  title={prompt.title}
+                  promptId={prompt.id}
+                  promptContent={prompt.content}
+                  variant="secondary" 
+                  size="md" 
+                />
+                
+                {/* Edit and Contribute Button - Transfers prompt details to contribute page */}
+                <a
+                  href={`/contribute/edit/${prompt.id}`}
+                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-5 py-3 rounded-lg transition-all duration-300 font-medium shadow-md hover:shadow-xl transform hover:scale-105 border border-transparent"
+                  aria-label="Edit and contribute to this prompt"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                  {t('generate.edit-and-contribute')}
+                </a>
+              </div>
             </div>
 
             {/* Details section */}

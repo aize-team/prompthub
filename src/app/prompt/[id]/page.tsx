@@ -28,8 +28,7 @@ function PromptDetailLoading() {
 }
 
 // Main export function
-export default function PromptDetailPage(props: any) {
-  const params = props.params;
+export default function PromptDetailPage({ params }: { params: { id: string } }) {
   const id = params.id;
   const { t } = useLanguage();
 

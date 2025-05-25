@@ -15,6 +15,7 @@ import Notification from '@/components/ui/Notification';
 import { getPromptById } from '@/lib/prompt-data';
 import { Skeleton } from '@/components/ui/skeleton';
 import PromptActions from '@/components/contribute/PromptActions';
+import ShareButton from '@/components/ui/ShareButton';
 
 function EditPromptContent() {
   const params = useParams<{ id: string }>();
@@ -282,6 +283,15 @@ function EditPromptContent() {
           <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
             {promptData?.title || 'Edit Prompt'}
           </h1>
+          <div className="flex items-center gap-3">
+            <ShareButton 
+              title={promptData?.title || 'Edit Prompt'}
+              promptId={promptData?.id}
+              promptContent={promptData?.content}
+              variant="outline"
+              size="sm"
+            />
+          </div>
         </div>
       </div>
       
