@@ -3,6 +3,10 @@ import OpenAI from "openai";
 
 let openai: OpenAI | null = null;
 
+const rateLimitMap = new Map<string, { count: number; timestamp: number }>();
+const MAX_REQUESTS = 5;
+const WINDOW_MS = 60_000; // 1 minute
+
 function getOpenAIClient() {
     if (!process.env.OPENAI_API_KEY) {
         throw new Error('OPENAI_API_KEY is not set in environment variables');
@@ -415,6 +419,21 @@ function simulatePromptAnalysis(promptIdea: string) {
 
 export async function POST(request: Request) {
     try {
+        const ip = request.headers.get('x-forwarded-for') || 'unknown';
+        const now = Date.now();
+        const entry = rateLimitMap.get(ip);
+        if (!entry || now - entry.timestamp > WINDOW_MS) {
+            rateLimitMap.set(ip, { count: 1, timestamp: now });
+        } else {
+            if (entry.count >= MAX_REQUESTS) {
+                return NextResponse.json(
+                    { error: 'Too many requests' },
+                    { status: 429 }
+                );
+            }
+            entry.count++;
+        }
+
         const { promptIdea } = await request.json();
 
         if (!promptIdea) {
