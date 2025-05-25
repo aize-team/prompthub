@@ -9,5 +9,5 @@ export const authOptions: AuthOptions = {
             issuer: process.env.KEYCLOAK_ISSUER,
         }),
     ],
-    // Add other NextAuth configurations as needed
+    secret: process.env.NEXTAUTH_SECRET,
 };
